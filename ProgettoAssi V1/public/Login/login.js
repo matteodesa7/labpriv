@@ -18,7 +18,7 @@ signinBtn.onclick = function(){
     if(!(signinBtn.classList.contains("disable"))){
         console.log("Effettui l'accesso");
         signinBtn.setAttribute("type", "submit");
-        document.getElementById("login-form").setAttribute("action", "accesso.php");
+        document.getElementById("login-form").setAttribute("action", "/access");
     }
     else{
         nameField.style.maxHeight= "0";
@@ -45,12 +45,15 @@ signupBtn.onclick = function(){
 //Al caricamento della pagina controlla se vi è stata una registrazione scorretta o un login scorretto
 document.addEventListener('DOMContentLoaded', function () {
   // Effettua una richiesta al server per ottenere il temporary message
-  fetch('/get-temporary-message')
+  fetch('/get-temporary-messages')
     .then(response => response.json())
     .then(data => {
+      console.log(data);
       const temporaryMessage = data.temporaryMessage;
       if (temporaryMessage) {
         // Usa il temporary message come preferisci, ad esempio mostrandolo all'utente
+        console.log(temporaryMessage);
+        
         if(temporaryMessage=="badPass"){
           localStorage.setItem("Registered",'badpass');
         }
@@ -69,8 +72,14 @@ document.addEventListener('DOMContentLoaded', function () {
         else{
           localStorage.setItem("Registered",true);
         }
-        console.log(temporaryMessage);
         checkRegistered();
+        if(temporaryMessage=="passerrata"){
+          localStorage.setItem("badLogin","pass");
+        }
+        else if(temporaryMessage=="emailnontrovata"){
+          localStorage.setItem("badLogin","email");
+        }
+        checkBadLogIn();
       }
     })
     .catch(error => {
