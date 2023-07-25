@@ -51,7 +51,24 @@ document.addEventListener('DOMContentLoaded', function () {
       const temporaryMessage = data.temporaryMessage;
       if (temporaryMessage) {
         // Usa il temporary message come preferisci, ad esempio mostrandolo all'utente
-        localStorage.setItem("Registered",true);
+        if(temporaryMessage=="badPass"){
+          localStorage.setItem("Registered",'badpass');
+        }
+        else if(temporaryMessage=="false"){
+          localStorage.setItem("Registered",false);
+        }
+        else if(temporaryMessage=="primary"){
+          localStorage.setItem("Registered",'primary');
+        }
+        else if(temporaryMessage=="noName"){
+          localStorage.setItem("Registered",'noName');
+        }
+        else if(temporaryMessage=="noMail"){
+          localStorage.setItem("Registered",'noMail');
+        }
+        else{
+          localStorage.setItem("Registered",true);
+        }
         console.log(temporaryMessage);
         checkRegistered();
       }
@@ -105,6 +122,26 @@ function checkRegistered(){
           removeR();
         });
         break;
+      case 'noName':
+          swal({
+            title: 'Errore',
+            text: 'Inserire il nome per proseguire',
+            icon: 'error',
+            ButtonText: 'OK',
+          }).then(() => {
+            removeR();
+          });
+          break;
+      case 'noMail':
+            swal({
+              title: 'Errore',
+              text: 'Inserire una mail corretta per proseguire',
+              icon: 'error',
+              ButtonText: 'OK',
+            }).then(() => {
+              removeR();
+            });
+          break;    
       default:
         console.log("utente non registrato");
         break;
