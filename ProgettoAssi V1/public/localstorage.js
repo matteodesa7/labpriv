@@ -1,5 +1,22 @@
 document.addEventListener("DOMContentLoaded", function(event) {
   checkLoggedIn();
+    // Effettua una richiesta al server per ottenere il temporary message
+    fetch('/get-access')
+    .then(response => response.json())
+    .then(data => {
+      console.log(data);
+      const firstTime=data.firstTime;
+      const loggedIn=data.loggedIn;
+      if(loggedIn){
+        localStorage.setItem('loggedIn', true);
+        if(firstTime){
+          localStorage.setItem('loggedIn','firstTime');
+        }
+      }
+    })
+    .catch(error => {
+      console.error('Errore nella richiesta del temporary message:', error);
+    });
 });
 //Prendo il nome preciso della pagina in cui mi trovo per effettuare ulteriori controlli nelle varie funzioni qui presenti
 var pathname = window.location.pathname;  
