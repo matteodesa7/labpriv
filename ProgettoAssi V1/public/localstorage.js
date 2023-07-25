@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", function(event) {
-  checkLoggedIn();
     // Effettua una richiesta al server per ottenere il temporary message
     fetch('/get-access')
     .then(response => response.json())
-    .then(data => {
+    .then(async data => {
       console.log(data);
       const firstTime=data.firstTime;
       const loggedIn=data.loggedIn;
@@ -11,11 +10,13 @@ document.addEventListener("DOMContentLoaded", function(event) {
         localStorage.setItem('loggedIn', true);
         if(firstTime){
           localStorage.setItem('loggedIn','firstTime');
+          await retrieveData(); //richiesta fetch per ottenere i dati delle scorse sessioni
         }
+        checkLoggedIn();
       }
     })
     .catch(error => {
-      console.error('Errore nella richiesta del temporary message:', error);
+      console.error('Errore:', error);
     });
 });
 //Prendo il nome preciso della pagina in cui mi trovo per effettuare ulteriori controlli nelle varie funzioni qui presenti
@@ -97,4 +98,24 @@ function Exit() {
     .catch(error => {
       console.error('Si è verificato un errore durante l\'invio della richiesta:', error);
     });
+}
+
+function retrieveData(){
+  fetch('/get-data')
+  .then(response => response.json())
+  .then(data => {
+    console.log(data);
+    const nome=data.nome;
+    const email=data.email;
+    const preferiti=data.preferiti;
+    const preferitiposti=data.preferitiposti;
+
+    localStorage.setItem('nomeUtente',nome);
+    localStorage.setItem('email',email);
+    localStorage.setItem('preferiti', preferiti);
+    localStorage.setItem('preferitiposti', preferitiposti);
+  })
+  .catch(error => {
+    console.error('Errore:', error);
+  });
 }
