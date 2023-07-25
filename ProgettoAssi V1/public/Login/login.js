@@ -51,7 +51,9 @@ document.addEventListener('DOMContentLoaded', function () {
       const temporaryMessage = data.temporaryMessage;
       if (temporaryMessage) {
         // Usa il temporary message come preferisci, ad esempio mostrandolo all'utente
+        localStorage.setItem("Registered",true);
         console.log(temporaryMessage);
+        checkRegistered();
       }
     })
     .catch(error => {
