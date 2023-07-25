@@ -104,17 +104,13 @@ router.post('/access', async (req, res) => {
   console.log(req.body);
   try{
     await inserisciLogin(req.body.email,req.body.password); //query 1
-    req.session.loggedIn=true;
-    //primo login temporarymessage
-    req.session.firstTime=true;
+    //req.session.loggedIn=true;
+    //req.session.firstTime=true;
 
     //await query 2
-    //localstorage del nome
-
-    //await query 3
     //localstorage dei preferiti 
 
-    //await query 4
+    //await query 3
     //localstorage dei preferitiposti
 
  
@@ -147,14 +143,27 @@ router.get('/access', (req, res) => {
 router.get('/get-access', (req, res) => {
   var firstTime=false;
   var loggedIn=false;
+
   if(req.session.firstTime){
     firstTime= req.session.firstTime;
-    delete req.session.firstTime;
   }
   if(req.session.loggedIn){
     loggedIn=req.session.loggedIn;
   }
   return res.json({firstTime,loggedIn});
+});
+
+router.get('/get-data', (req, res) => {
+  const loggedIn=req.session.loggedIn;
+  if(loggedIn && req.session.firstTime){
+    const nome=req.session.nome;
+    const email=req.session.email;
+    const preferiti=req.session.preferiti;
+    const preferitiposti=req.session.preferitiposti
+    
+    delete req.session.firstTime;
+    res.json({nome,email,preferiti,preferitiposti});
+  }
 });
 
 
@@ -215,7 +224,7 @@ async function inserisciLogin(email,pw) {
   try{
     await client.connect();
 
-    const query = 'SELECT password FROM Registrazioni WHERE email = $1';
+    const query = 'SELECT nome,password FROM Registrazioni WHERE email = $1';
     const values = [email];
 
     const result= await client.query(query,values);
@@ -224,8 +233,8 @@ async function inserisciLogin(email,pw) {
       throw Error('mail non trovata');
     }
     const hpw= result.rows[0].password;
-
-    bcrypt.compare(pw, hpw, (err, result) => {
+    var name=result.rows[0].nome;
+    bcrypt.compare(pw, hpw,(err, result) => {
       if (err) {
         // Si è verificato un errore durante il confronto
         console.error('Errore durante il confronto dell\'hash:', err);
@@ -233,6 +242,8 @@ async function inserisciLogin(email,pw) {
         // `result` è il risultato del confronto (true o false)
         if (result) {
           // I due hash corrispondono, la password è corretta
+          console.log(name);
+          console.log(email);
           console.log('Password corretta. Accesso consentito.');
         } else {
           // I due hash non corrispondono, la password è errata
