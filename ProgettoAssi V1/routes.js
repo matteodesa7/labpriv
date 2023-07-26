@@ -150,12 +150,16 @@ router.get('/get-data', (req, res) => {
   const loggedIn=req.session.loggedIn;
   if(loggedIn && req.session.firstTime){
     const nome=req.session.nome;
-    console.log("get data "+nome);
     const email=req.session.email;
     const preferiti=req.session.preferiti;
     const preferitiposti=req.session.preferitiposti
     
+    delete req.session.nome;
     delete req.session.firstTime;
+    delete req.session.email;
+    delete req.session.preferiti;
+    delete req.session.preferitiposti;
+
     res.json({nome,email,preferiti,preferitiposti});
   }
 });
@@ -163,10 +167,15 @@ router.get('/get-data', (req, res) => {
 
 router.post('/exit',async (req, res) => {
   console.log(req.body)
-  var done=true;
-  delete req.session.loggedIn;
-  //va fatto il codice per salvare i dati nella tabella
-  return res.json({done});
+  try{
+    await loadDb(JSON.parse(req.body.list),req.body.email,JSON.parse(req.body.list2));
+    var done=true;
+    delete req.session.loggedIn;
+    return res.json({done});
+  }
+  catch(error){
+    throw(error);
+  }
 });
 
 
@@ -321,5 +330,38 @@ async function comparePasswords(pw, hpw) {
     // Gestisci l'errore come desideri, ad esempio registrandolo o lanciando un'eccezione
     console.error('Errore durante il confronto dell\'hash:', error);
     throw error; // Puoi anche lanciare un'eccezione per indicare un errore
+  }
+}
+
+async function loadDb(markerlist,email,placelist){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+
+    const query = 'DELETE FROM preferiti WHERE email = $1';
+    const value = [email];
+    await client.query(query,value);
+    var i=0;
+    while(i<markerlist.length){
+      let marker=markerlist[i];
+      let place=placelist[i];
+      const values=[email,marker,place];
+      query2="INSERT INTO Preferiti(email,marker_id,places) VALUES ($1, $2, $3)";
+      await client.query(query2,values);
+      i++;
+    }
+  }
+  catch(err){
+    throw err;
+  }
+  finally{
+    await client.end();
   }
 }
