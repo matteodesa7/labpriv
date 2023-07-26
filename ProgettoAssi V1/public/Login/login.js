@@ -69,17 +69,17 @@ document.addEventListener('DOMContentLoaded', function () {
         else if(temporaryMessage=="noMail"){
           localStorage.setItem("Registered",'noMail');
         }
-        else{
+        else if(temporaryMessage=="Registered"){
           localStorage.setItem("Registered",true);
         }
-        checkRegistered();
-        if(temporaryMessage=="passerrata"){
+        else if(temporaryMessage=="passerrata"){
           localStorage.setItem("badLogin","pass");
         }
         else if(temporaryMessage=="emailnontrovata"){
           localStorage.setItem("badLogin","email");
         }
         checkBadLogIn();
+        checkRegistered();
       }
     })
     .catch(error => {

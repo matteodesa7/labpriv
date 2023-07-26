@@ -7,18 +7,19 @@ const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 
-let transporter = nodemailer.createTransport({
-  service: 'gmail', // Utilizziamo il servizio Gmail
+var transport = nodemailer.createTransport({
+  host: "sandbox.smtp.mailtrap.io",
+  port: 2525,
   auth: {
-    user: 'progettolab7@gmail.com', // Inserisci qui l'indirizzo email da cui inviare le email
-    pass: 'vvrslumzimlcfjfv', // Inserisci qui la password dell'account email
+    user: "ab3b89dcd22b03",
+    pass: "84df3c74b29adf"
   }
 });
 
 function inviaEmailDiBenvenuto(destinatario) {
   const mailOptions = {
-    from: 'progettolab7@gmail.com', // L'indirizzo email da cui invii l'email (stesso dell'auth user)
-    to: destinatario,
+    from: "sandbox.smtp.mailtrap.io", // L'indirizzo email da cui invii l'email (stesso dell'auth user)
+    to: "sandbox.smtp.mailtrap.io",
     subject: 'Benvenuto al nostro sito!',
     text: 'Grazie per esserti iscritto al nostro sito. Benvenuto!',
   };
@@ -73,7 +74,7 @@ router.post('/redirect', async (req, res) => {
       await inserisciRegistrazione(nome, email, hs);
       
       // Imposta una variabile di sessione temporanea
-      req.session.temporaryMessage = "Grazie per esserti registrato!"; // Cambia il messaggio come preferisci
+      req.session.temporaryMessage = "Registered"; // Cambia il messaggio come preferisci
 
       // Effettua la redirect a /Login/Login.html
       return res.redirect('/Login/Login.html');
@@ -103,18 +104,10 @@ router.get('/get-temporary-messages', (req, res) => {
 router.post('/access', async (req, res) => {
   console.log(req.body);
   try{
-    await inserisciLogin(req.body.email,req.body.password); //query 1
-    //req.session.loggedIn=true;
-    //req.session.firstTime=true;
-
-    //await query 2
-    //localstorage dei preferiti 
-
-    //await query 3
-    //localstorage dei preferitiposti
-
- 
-
+    await inserisciLogin(req.body.email,req.body.password,req); //query 1
+    req.session.loggedIn=true;
+    req.session.firstTime=true;
+    await inserisciPreferiti(req.body.email,req);
     return res.redirect('/index.html');
   }
   catch(err){
@@ -124,7 +117,7 @@ router.post('/access', async (req, res) => {
       console.log("funziona");
       req.session.temporaryMessage="emailnontrovata";
     }
-    else if(errore.includes('password errata')){
+    if(errore.includes("password errata")){
       req.session.temporaryMessage="passerrata";
     }
     return res.redirect('/Login/Login.html');
@@ -157,6 +150,7 @@ router.get('/get-data', (req, res) => {
   const loggedIn=req.session.loggedIn;
   if(loggedIn && req.session.firstTime){
     const nome=req.session.nome;
+    console.log("get data "+nome);
     const email=req.session.email;
     const preferiti=req.session.preferiti;
     const preferitiposti=req.session.preferitiposti
@@ -187,7 +181,7 @@ function isValidEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 }
-
+//La registrazione dell'utente
 async function inserisciRegistrazione(nome, email, hs) {
   const client = new Client({
     user: 'postgres',
@@ -212,7 +206,8 @@ async function inserisciRegistrazione(nome, email, hs) {
     await client.end();
   }
 }
-async function inserisciLogin(email,pw) {
+//Login dell'utente
+async function inserisciLogin(email,pw,req) {
   const client = new Client({
     user: 'postgres',
     host: 'localhost', 
@@ -234,24 +229,24 @@ async function inserisciLogin(email,pw) {
     }
     const hpw= result.rows[0].password;
     var name=result.rows[0].nome;
-    bcrypt.compare(pw, hpw,(err, result) => {
-      if (err) {
-        // Si è verificato un errore durante il confronto
-        console.error('Errore durante il confronto dell\'hash:', err);
-      } else {
-        // `result` è il risultato del confronto (true o false)
-        if (result) {
-          // I due hash corrispondono, la password è corretta
-          console.log(name);
-          console.log(email);
-          console.log('Password corretta. Accesso consentito.');
-        } else {
-          // I due hash non corrispondono, la password è errata
-          console.log('Password errata. Accesso negato.');
-          throw Error('password errata');
-        }
-      }
-    });
+    var pwerrata=false;
+    await comparePasswords(pw, hpw)
+    .then((result) => {
+    if (result) {
+      req.session.nome=name;
+      console.log("Stampa del login "+req.session.nome);
+      req.session.email=email;
+      console.log('Password corretta. Accesso consentito.');
+    } else {
+      console.log('Password errata. Accesso negato.');
+      pwerrata=true;   
+    }
+
+  })
+  .catch((error) => {
+    throw error;
+  });
+  if(pwerrata) throw Error("password errata");
   }
   catch(err){
     throw err;
@@ -262,7 +257,7 @@ async function inserisciLogin(email,pw) {
 }
 
 
-
+//Funzione per generare una password random
 function generateRandomPassword(length) {
   // Lunghezza della password da generare
   const passwordLength = length || 16;
@@ -274,4 +269,47 @@ function generateRandomPassword(length) {
   const password = buffer.toString('hex');
 
   return password;
+}
+
+async function inserisciPreferiti(email,req) {
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+
+    const query = 'SELECT marker_id,places FROM preferiti WHERE email = $1';
+    const values = [email];
+
+    req.session.preferiti=[];
+    req.session.preferitiposti=[];
+    const result= await client.query(query,values);
+
+    result.rows.forEach((row)=>{
+      req.session.preferiti.push(row.marker_id);
+      req.session.preferitiposti.push(row.places);
+    });
+  }
+  catch(err){
+    throw err;
+  }
+  finally{
+    await client.end();
+  }
+}
+
+async function comparePasswords(pw, hpw) {
+  try {
+    const result = await bcrypt.compare(pw, hpw);
+    return result;
+  } catch (error) {
+    // Gestisci l'errore come desideri, ad esempio registrandolo o lanciando un'eccezione
+    console.error('Errore durante il confronto dell\'hash:', error);
+    throw error; // Puoi anche lanciare un'eccezione per indicare un errore
+  }
 }

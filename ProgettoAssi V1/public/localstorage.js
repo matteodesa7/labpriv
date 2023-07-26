@@ -12,12 +12,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
           localStorage.setItem('loggedIn','firstTime');
           await retrieveData(); //richiesta fetch per ottenere i dati delle scorse sessioni
         }
-        checkLoggedIn();
       }
     })
     .catch(error => {
       console.error('Errore:', error);
     });
+    checkLoggedIn();
 });
 //Prendo il nome preciso della pagina in cui mi trovo per effettuare ulteriori controlli nelle varie funzioni qui presenti
 var pathname = window.location.pathname;  
@@ -107,8 +107,8 @@ function retrieveData(){
     console.log(data);
     const nome=data.nome;
     const email=data.email;
-    const preferiti=data.preferiti;
-    const preferitiposti=data.preferitiposti;
+    const preferiti=JSON.stringify(data.preferiti);
+    const preferitiposti=JSON.stringify(data.preferitiposti);
 
     localStorage.setItem('nomeUtente',nome);
     localStorage.setItem('email',email);
