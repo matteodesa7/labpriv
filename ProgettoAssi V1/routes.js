@@ -161,6 +161,16 @@ router.get('/get-data', (req, res) => {
 });
 
 
+router.post('/exit',async (req, res) => {
+  console.log(req.body)
+  var done=true;
+  delete req.session.loggedIn;
+  //va fatto il codice per salvare i dati nella tabella
+  return res.json({done});
+});
+
+
+
 module.exports = router;
 
 
