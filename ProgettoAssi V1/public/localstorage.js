@@ -70,7 +70,7 @@ function Exit() {
     params.append('email', email);
     params.append('list2',JSON.stringify(list2));
 
-    fetch('/Login/Exit.php', {
+    fetch('/exit', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
@@ -84,6 +84,7 @@ function Exit() {
         localStorage.removeItem('email');
         localStorage.removeItem('preferiti');
         localStorage.removeItem('preferitiposti');
+        localStorage.removeItem("nomeUtente");
         //controllo se sono nella pagina dei preferiti
         if(pageName=="favourite.html"){
           window.location.href = "../index.html";
@@ -114,6 +115,7 @@ function retrieveData(){
     localStorage.setItem('email',email);
     localStorage.setItem('preferiti', preferiti);
     localStorage.setItem('preferitiposti', preferitiposti);
+    location.reload();
   })
   .catch(error => {
     console.error('Errore:', error);
