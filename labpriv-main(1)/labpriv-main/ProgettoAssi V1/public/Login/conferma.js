@@ -22,7 +22,7 @@ document.getElementById("btnConfermaEmail").addEventListener("click", function (
     });
   }
 });
-document.addEventListener('DOMContentLoaded', function () {
+/*document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const destinatario = urlParams.get('destinatario');
     if(destinatario){
@@ -54,4 +54,4 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.href = "/Login/Login.html"; // Usa "=" invece di "/"
 
     }
-});
+});*/
