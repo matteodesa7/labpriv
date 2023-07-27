@@ -20,10 +20,17 @@ const mailOptions = {
     from: "progettolab7@gmail.com", // L'indirizzo email da cui invii l'email (stesso dell'auth user)
     to: "",
     subject: 'Benvenuto al nostro sito!',
-    text: 'Grazie per esserti iscritto al nostro sito. Conferma la mail per accedere: http://localhost:8000/Login/conferma.html?destinatario=',
+    text: '',
   };
+const mailOptionsText='Grazie per esserti iscritto al nostro sito. Conferma la mail per accedere: http://localhost:8000/Login/conferma.html?destinatario=';
   
-
+const mailOptions2 = {
+    from: "progettolab7@gmail.com", // L'indirizzo email da cui invii l'email (stesso dell'auth user)
+    to: "",
+    subject: 'Reimposta la tua password',
+    text: '',
+  };
+const mailOptions2Text='Reimposta la tua password a questo link: http://localhost:8000/Login/Reimpostapw.html?destinatario=';
 
 
 
@@ -205,7 +212,17 @@ router.post('/checkemail',async (req, res) => {
     return res.json({done});
   }
 });
-
+router.post('/recuperoPass',async (req, res) => {
+  try{
+    await changePassReq(req.body.email);
+    req.session.temporaryMessage="recPwS";
+    return res.redirect('/Login/Login.html');
+  }
+  catch(error){
+    req.session.temporaryMessage="recPwNS";
+    return res.redirect('/Login/Login.html');
+  }
+});
 
 
 
@@ -221,7 +238,39 @@ module.exports = router;
 
 
 //funzioni varie
+async function changePassReq(email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
 
+  try{
+    await client.connect();
+    const query = 'SELECT confirmed FROM registrazioni WHERE email=$1';
+    const values = [email];
+    const result= await client.query(query,values);
+    if(result.rows.length==0){
+      throw Error("Email non presente");
+    }
+    mailOptions2.to=email;
+    mailOptions2.text=mailOptions2Text+email;
+    transporter.sendMail(mailOptions2, function(error, info){
+      if (error) {
+     console.log(error);
+      } else {
+        console.log('Email sent');
+      }
+    });
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
 async function checkEmail(email){
   const client = new Client({
     user: 'postgres',
@@ -309,7 +358,7 @@ async function inserisciRegistrazione(nome, email, hs){
     await client.query(query, values);
     console.log('Registrazione inserita con successo!');
     mailOptions.to=email;
-    mailOptions.text=mailOptions.text+email;
+    mailOptions.text=mailOptionsText+email;
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
      console.log(error);
