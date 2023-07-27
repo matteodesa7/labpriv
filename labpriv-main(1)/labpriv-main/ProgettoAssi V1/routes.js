@@ -200,15 +200,8 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 //La registrazione dell'utente
-async function inserisciRegistrazione(nome, email, hs) {
-  transporter.sendMail(mailOptions, function(error, info){
-    if (error) {
-   console.log(error);
-    } else {
-      console.log('Email sent');
-      // do something useful
-    }
-  });
+
+  
   const client = new Client({
     user: 'postgres',
     host: 'localhost', 
@@ -217,7 +210,17 @@ async function inserisciRegistrazione(nome, email, hs) {
     port: 5432, // La porta di default per PostgreSQL è 5432
   });
 
+  
   try {
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+     console.log(error);
+      } else {
+        console.log('Email sent');
+        // do something useful
+      }
+    });
+    console.log("email sent");
     await client.connect();
 
     const query = `INSERT INTO Registrazioni(Nome, Email, Password) VALUES ($1, $2, $3)`;
@@ -231,7 +234,7 @@ async function inserisciRegistrazione(nome, email, hs) {
   } finally {
     await client.end();
   }
-}
+
 //Login dell'utente
 async function inserisciLogin(email,pw,req) {
   const client = new Client({

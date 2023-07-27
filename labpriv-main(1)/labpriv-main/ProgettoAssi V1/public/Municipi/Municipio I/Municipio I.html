@@ -100,9 +100,19 @@
             </div>
             <div class="right-column">
                 <div class="filter-container">
-                    <label for="filter">Filtra per nome:</label>
-                    <input type="text" id="filter" name="filter">
-
+                    
+                    <!-- Toggler per il dropdown-menu -->
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="FiltroMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Seleziona filtro
+                        </button>
+                        <div class="dropdown-menu" id="menudiscesa" aria-labelledby="FiltroMenu">
+                            <!-- Contenuto del dropdown-menu -->
+                            <a class="dropdown-item" href="#">Opzione 1</a>
+                            <a class="dropdown-item" href="#">Opzione 2</a>
+                            <a class="dropdown-item" href="#">Opzione 3</a>
+                        </div>
+                    </div>
                 </div>
                 <ul class="list-container" id="lista-luoghi">
                 

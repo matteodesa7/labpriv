@@ -57,21 +57,18 @@
     margin-bottom: 20px;
   }
 
-  /*Etichetta al filtro*/
-  .filter-container label {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-right: 10px;
-    margin-left: 30px;
+  #FiltroMenu {
+    margin-left: 20px;
     margin-top: 20px;
+    background-color: rgb(255, 196, 157);
+    border: 2px solid #999898;
+    border-radius: 10px;
+    color: black;
   }
 
-  /*Casella per scrivere nel filtro*/
-  .filter-container input {
-    font-size: 1rem;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+  #menudiscesa{
+    width: auto;
+    height: auto;
   }
 
   /*Stile footer e elementi del footer*/
