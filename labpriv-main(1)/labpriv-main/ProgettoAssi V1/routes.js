@@ -18,11 +18,11 @@ const transporter = nodemailer.createTransport({
 
 const mailOptions = {
     from: "progettolab7@gmail.com", // L'indirizzo email da cui invii l'email (stesso dell'auth user)
-    to: "progettolab7@gmail.com",
+    to: "",
     subject: 'Benvenuto al nostro sito!',
-    text: 'Grazie per esserti iscritto al nostro sito. Benvenuto!',
+    text: 'Grazie per esserti iscritto al nostro sito. Conferma la mail per accedere: http://localhost:8000/Login/conferma.html?destinatario=',
   };
-
+  
 
 
 
@@ -73,7 +73,7 @@ router.post('/redirect', async (req, res) => {
       await inserisciRegistrazione(nome, email, hs);
       
       // Imposta una variabile di sessione temporanea
-      req.session.temporaryMessage = "Registered"; // Cambia il messaggio come preferisci
+      req.session.temporaryMessage = "tobeConfirmed"; // Cambia il messaggio come preferisci
 
       // Effettua la redirect a /Login/Login.html
       return res.redirect('/Login/Login.html');
@@ -101,7 +101,6 @@ router.get('/get-temporary-messages', (req, res) => {
   res.json({ temporaryMessage});
 });
 router.post('/access', async (req, res) => {
-  console.log(req.body);
   try{
     await inserisciLogin(req.body.email,req.body.password,req); //query 1
     req.session.loggedIn=true;
@@ -111,14 +110,17 @@ router.post('/access', async (req, res) => {
   }
   catch(err){
     var errore= err.stack;
-    console.log('errore '+err);
+    console.log(err);
     if(errore.includes('mail non trovata')){
-      console.log("funziona");
       req.session.temporaryMessage="emailnontrovata";
     }
     if(errore.includes("password errata")){
       req.session.temporaryMessage="passerrata";
     }
+    if(errore.includes("Email non confermata")){
+      req.session.temporaryMessage = "notConfirmed";
+    }
+    console.log(req.session.temporaryMessage);
     return res.redirect('/Login/Login.html');
   }
 
@@ -177,6 +179,38 @@ router.post('/exit',async (req, res) => {
   }
 });
 
+router.post('/confirmemail',async (req, res) => {
+  console.log(req.body)
+  try{
+    await confirmEmail(req.body.destinatario);
+    var done=true;
+    return res.json({done});
+  }
+  catch(error){
+    throw(error);
+  }
+});
+
+
+router.post('/checkemail',async (req, res) => {
+  console.log(req.body)
+  try{
+    var done;
+    await checkEmail(req.body.destinatario);
+    done=true;
+    return res.json({done});
+  }
+  catch(error){
+    done=false;
+    return res.json({done});
+  }
+});
+
+
+
+
+
+
 
 
 module.exports = router;
@@ -187,6 +221,64 @@ module.exports = router;
 
 
 //funzioni varie
+
+async function checkEmail(email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT confirmed FROM registrazioni WHERE email=$1';
+    const values = [email];
+    const result= await client.query(query,values);
+    if(result.rows.length==0){
+      throw Error("Email non presente");
+    }
+    else if(result.rows[0].confirmed){
+      throw Error("Verifica già effettuata");
+    }
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+
+async function confirmEmail(email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'UPDATE registrazioni SET confirmed=true WHERE email=$1';
+    const values = [email];
+    const result= await client.query(query,values);
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+
+
+
+
+
+
 const createHash = async (plainText) => {
   const saltRounds = 10;
 
@@ -200,8 +292,7 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 //La registrazione dell'utente
-
-  
+async function inserisciRegistrazione(nome, email, hs){
   const client = new Client({
     user: 'postgres',
     host: 'localhost', 
@@ -209,18 +300,7 @@ function isValidEmail(email) {
     password: 'lallacommit',
     port: 5432, // La porta di default per PostgreSQL è 5432
   });
-
-  
   try {
-    transporter.sendMail(mailOptions, function(error, info){
-      if (error) {
-     console.log(error);
-      } else {
-        console.log('Email sent');
-        // do something useful
-      }
-    });
-    console.log("email sent");
     await client.connect();
 
     const query = `INSERT INTO Registrazioni(Nome, Email, Password) VALUES ($1, $2, $3)`;
@@ -228,13 +308,21 @@ function isValidEmail(email) {
 
     await client.query(query, values);
     console.log('Registrazione inserita con successo!');
-    
+    mailOptions.to=email;
+    mailOptions.text=mailOptions.text+email;
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+     console.log(error);
+      } else {
+        console.log('Email sent');
+      }
+    });
   } catch (err) {
     throw err;
   } finally {
     await client.end();
   }
-
+}
 //Login dell'utente
 async function inserisciLogin(email,pw,req) {
   const client = new Client({
@@ -248,13 +336,17 @@ async function inserisciLogin(email,pw,req) {
   try{
     await client.connect();
 
-    const query = 'SELECT nome,password FROM Registrazioni WHERE email = $1';
+    const query = 'SELECT nome,password,confirmed FROM Registrazioni WHERE email = $1';
     const values = [email];
 
     const result= await client.query(query,values);
 
     if (result.rows.length == 0){
       throw Error('mail non trovata');
+    }
+    const Confirmed= result.rows[0].confirmed;
+    if(!Confirmed){
+      throw Error("Email non confermata");
     }
     const hpw= result.rows[0].password;
     var name=result.rows[0].nome;
@@ -375,3 +467,4 @@ async function loadDb(markerlist,email,placelist){
     await client.end();
   }
 }
+

@@ -5,13 +5,6 @@ let nameField= document.getElementById("nameField")
 let title= document.getElementById("title")
 //Variabile che mi serve per ricordare in quale pagina ci si tovasse prima di effettuare il login
 const pagina_di_riferimento = document.referrer.replace(/^.*?\/\/[^\/]+(\/.*)$/, "$1");
-if(pagina_di_riferimento){
-  console.log(pagina_di_riferimento);
-  var page=document.getElementById('page');
-  if(pagina_di_riferimento!="/Login/registrazione.php"&&pagina_di_riferimento!="/Login/Login.html") page.value=pagina_di_riferimento;
-  else page.value="/index.html";
-  console.log(page.value);
-}
 
 //funzioni per cambiare da registrazione ad accesso e viceversa
 signinBtn.onclick = function(){
@@ -48,11 +41,10 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('/get-temporary-messages')
     .then(response => response.json())
     .then(data => {
-      console.log(data);
       const temporaryMessage = data.temporaryMessage;
       if (temporaryMessage) {
         // Usa il temporary message come preferisci, ad esempio mostrandolo all'utente
-        console.log(temporaryMessage);
+        console.log("Messaggio temporaneo: "+temporaryMessage);
         
         if(temporaryMessage=="badPass"){
           localStorage.setItem("Registered",'badpass');
@@ -69,8 +61,11 @@ document.addEventListener('DOMContentLoaded', function () {
         else if(temporaryMessage=="noMail"){
           localStorage.setItem("Registered",'noMail');
         }
-        else if(temporaryMessage=="Registered"){
-          localStorage.setItem("Registered",true);
+        else if(temporaryMessage=="tobeConfirmed"){
+          localStorage.setItem("Registered","tobeConfirmed");
+        }
+        else if(temporaryMessage=="notConfirmed"){
+          localStorage.setItem("badLogin",'notConfirmed');
         }
         else if(temporaryMessage=="passerrata"){
           localStorage.setItem("badLogin","pass");
@@ -78,9 +73,9 @@ document.addEventListener('DOMContentLoaded', function () {
         else if(temporaryMessage=="emailnontrovata"){
           localStorage.setItem("badLogin","email");
         }
-        checkBadLogIn();
-        checkRegistered();
       }
+      checkBadLogIn();
+      checkRegistered();
     })
     .catch(error => {
       console.error('Errore nella richiesta del temporary message:', error);
@@ -89,12 +84,12 @@ document.addEventListener('DOMContentLoaded', function () {
 //Funzione chiamata se esiste una registrazione non andata a buon fine, mostra una serie di popup e ricarica la pagina in cui si trova l'utente
 function checkRegistered(){
   var Registered= localStorage.getItem("Registered");
-  console.log(Registered);
+  console.log("Stato di registrazione: "+Registered);
     switch(Registered){
-      case 'true':
+      case 'tobeConfirmed':
         swal({
-          title: 'Benvenuto!',
-          text: 'Clicca sul tasto accedi per accedere al tuo profilo',
+          title: 'Ci siamo quasi!',
+          text: 'Conferma la tua mail per effettuare il primo login',
           icon: 'success',
           ButtonText: 'OK',
         }).then(() => {
@@ -150,15 +145,26 @@ function checkRegistered(){
             }).then(() => {
               removeR();
             });
-          break;    
+          break; 
+      case 'true':
+            swal({
+              title: 'Benvenuto',
+              text: 'Adesso puoi effettuare il tuo primo accesso',
+              icon: 'success',
+              ButtonText: 'OK',
+            }).then(() => {
+              removeR();
+            });
+          break;   
       default:
-        console.log("utente non registrato");
+        //utente non registrato
         break;
     }
 }
 //Funzione chiamata se esiste un login non andato a buon fine, mostra una serie di popup e ricarica la pagina in cui si trova l'utente
 function checkBadLogIn(){
   var badLogin= localStorage.getItem('badLogin');
+  console.log("Stato di badLogin: "+badLogin);
   switch(badLogin){
     case 'pass':
       swal({
@@ -179,7 +185,16 @@ function checkBadLogIn(){
         }).then(() => {
           removeL();
         });
-      break;
+     break;
+    case 'notConfirmed':
+          swal({
+            title: 'Attenzione',
+            text: 'Confermare la mail prima di accedere',
+            icon: 'warning',
+            ButtonText: 'OK',
+          }).then(() => {
+            removeL();
+          }); 
   }
 }
 
