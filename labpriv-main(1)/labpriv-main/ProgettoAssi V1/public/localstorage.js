@@ -121,3 +121,7 @@ function retrieveData(){
     console.error('Errore:', error);
   });
 }
+process.on('close', () => {
+  console.log("server chiuso");
+  localStorage.clear();
+});

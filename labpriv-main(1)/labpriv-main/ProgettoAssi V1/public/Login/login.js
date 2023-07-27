@@ -2,6 +2,9 @@
 let signupBtn= document.getElementById("signupBtn")
 let signinBtn= document.getElementById("signinBtn")
 let nameField= document.getElementById("nameField")
+let passField= document.getElementById("passField")
+let forgotPasswordButton= document.getElementById("reset-password-link")
+let testoPass=document.getElementById("TestoPass");
 let title= document.getElementById("title")
 //Variabile che mi serve per ricordare in quale pagina ci si tovasse prima di effettuare il login
 const pagina_di_riferimento = document.referrer.replace(/^.*?\/\/[^\/]+(\/.*)$/, "$1");
@@ -11,7 +14,13 @@ signinBtn.onclick = function(){
     if(!(signinBtn.classList.contains("disable"))){
         console.log("Effettui l'accesso");
         signinBtn.setAttribute("type", "submit");
-        document.getElementById("login-form").setAttribute("action", "/access");
+        if(passField.style.maxHeight != "0px"){
+          document.getElementById("login-form").setAttribute("action", "/access");
+        }
+        else{
+          document.getElementById("login-form").setAttribute("action", "/recuperoPass");
+        }
+
     }
     else{
         nameField.style.maxHeight= "0";
@@ -24,8 +33,15 @@ signinBtn.onclick = function(){
 signupBtn.onclick = function(){
     if(!(signupBtn.classList.contains("disable"))){
         console.log("Effettui la registrazione");
+
         signupBtn.setAttribute("type", "submit");
-        document.getElementById("login-form").setAttribute("action", "/redirect");
+       
+        if(passField.style.maxHeight != "0px"){
+          document.getElementById("login-form").setAttribute("action", "/redirect");
+        }
+        else{
+          document.getElementById("login-form").setAttribute("action", "/recuperoPass");
+        }
     }
     else{
         nameField.style.maxHeight= "60px";
@@ -72,6 +88,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         else if(temporaryMessage=="emailnontrovata"){
           localStorage.setItem("badLogin","email");
+        }
+        else if(temporaryMessage=='recPwS'){
+          swal({
+            title: 'Fatto',
+            text: 'Controlla la tua mail per reimpostare la password',
+            icon: 'success',
+            ButtonText: 'OK',
+          });
+        }
+        else if(temporaryMessage=='recPwNS'){
+          swal({
+            title: 'Attenzione',
+            text: 'Non hai nessun account iscritto con questo indirizzo email',
+            icon: 'warning',
+            ButtonText: 'OK',
+          })
         }
       }
       checkBadLogIn();
@@ -211,3 +243,27 @@ function removeL(){
     window.location.href="/Login/Login.html";
   }
 }
+
+forgotPasswordButton.addEventListener("click", function () {
+  if(passField.style.maxHeight == "0px"){
+    location.reload();
+  }
+  signinBtn.style.display='none';
+  signupBtn.style.display='none';
+  var pulsante
+  if(!(signinBtn.classList.contains("disable"))){
+    pulsante=signinBtn;
+  }
+  else{
+    pulsante=signupBtn;
+  }
+  pulsante.textContent="Invia";
+  pulsante.style.display='block';
+  nameField.style.maxHeight= "0";
+  passField.style.maxHeight= "0";
+  title.innerHTML= "Recupero Password";
+  forgotPasswordButton.textContent="Torna indietro";
+  testoPass.innerHTML="Hai ricordato la password? ";
+});
+
+

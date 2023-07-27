@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const routes = require('./routes.js');
+const { Server } = require("http");
 const app = express();
 const publicPath = path.join(__dirname, "public");
 app.use(express.static(publicPath));
@@ -384,6 +385,16 @@ app.use('/', routes);
 
 const port = 8000; // Puoi scegliere la porta che preferisci
 
-app.listen(port, () => {
+const server=app.listen(port, () => {
 console.log(`Il server è in esecuzione su http://localhost:${port}/`);
 });
+
+// Cattura l'evento di chiusura del server
+process.on('SIGINT', () => {
+    console.log('\nChiusura del server...');
+        // Esegui qui altre operazioni di pulizia o salvataggio prima della chiusura
+    server.close(() => {
+        console.log('Server chiuso.');
+        process.exit(0); // Esci dal processo con stato di successo (0)
+      });
+  });
