@@ -389,12 +389,36 @@ const server=app.listen(port, () => {
 console.log(`Il server è in esecuzione su http://localhost:${port}/`);
 });
 
-// Cattura l'evento di chiusura del server
-process.on('SIGINT', () => {
-    console.log('\nChiusura del server...');
-        // Esegui qui altre operazioni di pulizia o salvataggio prima della chiusura
-    server.close(() => {
-        console.log('Server chiuso.');
-        process.exit(0); // Esci dal processo con stato di successo (0)
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ server });
+
+let singleConnection = null;
+// Gestisci la connessione WebSocket del client
+wss.on('connection', (ws) => {
+    ws.on('close', () => {
+        console.log('Connessione WebSocket chiusa');
+        singleConnection=false;
+        return;
       });
-  });
+    console.log('Client connesso');
+    singleConnection=ws;
+});
+process.on('SIGINT',() => {
+    console.log('\nChiusura del server...');
+    try{
+        if(singleConnection){
+            singleConnection.send('Chiusura server');
+        }
+        server.close(() => {
+          console.log('Server chiuso.');
+          process.exit(0);
+        });
+    }
+    catch(error){
+        server.close(() => {
+            console.log('Server chiuso.');
+            process.exit(0);
+          }); 
+    }
+
+});
