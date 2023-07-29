@@ -6,6 +6,8 @@ const { Client } = require('pg');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
+const axios = require('axios');
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -100,6 +102,11 @@ router.post('/redirect', async (req, res) => {
 router.get('/redirect', (req, res) => {
   // Effettua la redirect a /index.html
   res.redirect('/index.html');
+});
+
+router.post('/redirectgoogle', (req, res) => {
+  const credentials=req.body;
+  verifyToken(credentials);
 });
 
 router.get('/get-temporary-messages', (req, res) => {
@@ -517,3 +524,20 @@ async function loadDb(markerlist,email,placelist){
   }
 }
 
+async function verifyToken(credentials) {
+  try {
+    // Invia una richiesta al server di autenticazione di Google per convalidare il token
+
+    // Se la risposta contiene un campo "aud" corrispondente al client_id del tuo progetto,
+    // allora il token è valido e firmato correttamente
+    if (response.data.aud === '600149306723-juah0kfpbrj388h9vugt3rdm2mmk2nir.apps.googleusercontent.com') {
+      const publicKey = '... la tua chiave pubblica RS256 ...';
+      const decoded = jwt.verify(credentials.credential, publicKey, { algorithms: ['RS256'] });
+      console.log('Credenziali decodificate:', decoded);
+    } else {
+      console.log('Token JWT non valido.');
+    }
+  } catch (error) {
+    console.error('Errore durante la convalida del token:', error.message);
+  }
+}
