@@ -121,7 +121,12 @@ function retrieveData(){
     console.error('Errore:', error);
   });
 }
-process.on('close', () => {
-  console.log("server chiuso");
-  localStorage.clear();
-});
+  const socket = new WebSocket('ws://localhost:8000');
+
+  socket.onmessage =async  (event) => {
+    console.log(`Messaggio ricevuto dal server: ${event.data}`);
+    if(event.data=="Chiusura server"){
+      await localStorage.clear();
+      window.location.href = "https://www.example.com/";
+    }
+  };
