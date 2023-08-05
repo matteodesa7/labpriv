@@ -783,7 +783,5 @@ var Descrizioni = {
       filtroMenuButton.textContent = buttonText;
   }
   
-  checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', updateFilterMenu);
-  });
+  
   

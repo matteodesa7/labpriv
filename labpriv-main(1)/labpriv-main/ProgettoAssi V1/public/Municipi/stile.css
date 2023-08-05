@@ -118,8 +118,8 @@ body {
     border-color: #4e555b;
 }
 
-/*Bottone per menù a discesa della navbar*/
-.dropdown-menu {
+/*Menù a discesa sulla navbar con nome utente*/
+#usermenu {
     position: absolute;
     left: 85%;
     background-color: rgb(255, 196, 157);
