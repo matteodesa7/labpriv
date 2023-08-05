@@ -10,6 +10,7 @@
     "disown-opener": "off",
     "compat-api/css": "off",
     "axe/language": "off",
-    "meta-charset-utf-8": "off"
+    "meta-charset-utf-8": "off",
+    "axe/parsing": "off"
   }
 }
