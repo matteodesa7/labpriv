@@ -109,7 +109,7 @@ body {
     border-radius: .30rem;
     color: rgba(0,0,0,.5);
     border-color: rgba(0,0,0,.1);
-    margin-left: 870px;
+    width: auto;
 }
 /*Azione bottone dopo il click*/
 .btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active, .show>.btn-secondary.dropdown-toggle {
@@ -130,6 +130,19 @@ body {
 }
 #togglerButton:hover {
     background-color: rgb(255, 196, 157);
+}
+
+.circular-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px; /* Imposta la larghezza del pulsante circolare */
+  height: 50px; /* Imposta l'altezza del pulsante circolare */
+  background-color: rgb(255, 196, 157); /* Colore di sfondo del pulsante */
+  color: #fff; /* Colore del testo del pulsante */
+  border-radius: 50%; /* Imposta il border-radius al 50% per renderlo circolare */
+  cursor: pointer;
+  margin-left: 10px;
 }
 
 /*MEDIA QUERY PER RENDERE LA PAGINA RESPONSIVE*/
@@ -163,7 +176,7 @@ body {
       margin-left: 0;
     }
   }
-  
+
   /* Per schermi di larghezza compresa tra 768px e 991px */
   @media (min-width: 768px) and (max-width: 991px) {
     .nav-link {
