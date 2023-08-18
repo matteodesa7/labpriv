@@ -105,6 +105,14 @@ document.addEventListener('DOMContentLoaded', function () {
             ButtonText: 'OK',
           })
         }
+        else if(temporaryMessage=="UpdatedPw"){
+          swal({
+            title: 'Password reimpostata con successo!',
+            text: 'Prova ad accedere',
+            icon: 'success',
+            ButtonText: 'OK',
+          });
+        }
       }
       checkBadLogIn();
       checkRegistered();

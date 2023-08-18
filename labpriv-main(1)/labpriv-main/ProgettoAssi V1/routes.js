@@ -231,6 +231,39 @@ router.post('/recuperoPass',async (req, res) => {
   }
 });
 
+router.post('/emailindb',async (req, res) => {
+  var done;
+  try{
+    await checkEmailpw(req.body.destinatario,req.body.key);
+    done=true
+    return res.json({done});
+  }
+  catch(error){
+    done=false;
+    return res.json({done});
+  }
+});
+
+router.post('/reset-password',async (req, res) => {
+  console.log(req.body);
+  var pw=req.body.password;
+  if (pw.length < 8 || !/[A-Z]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) {
+    req.session.temporaryMessage = "badPass";
+    return res.redirect(req.body.url);
+  }
+  else{
+    try{
+      const hs = await createHash(pw);
+      await Updatepw(req.body.email,hs);
+      req.session.temporaryMessage="UpdatedPw";
+      return res.redirect("/Login/Login.html");
+    }
+    catch(error){
+      req.session.temporaryMessage="updateError";
+      return res.redirect(req.body.url);
+    }
+  }
+});
 
 
 
@@ -245,6 +278,33 @@ module.exports = router;
 
 
 //funzioni varie
+async function Updatepw(email,pw){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'UPDATE registrazioni SET password=$2 WHERE email=$1';
+    const values = [email,pw];
+    const result= await client.query(query,values);
+    console.log("Password modificata");
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+
+
+
+
 async function changePassReq(email){
   const client = new Client({
     user: 'postgres',
@@ -256,15 +316,17 @@ async function changePassReq(email){
 
   try{
     await client.connect();
-    const query = 'SELECT confirmed FROM registrazioni WHERE email=$1';
+    const query = 'SELECT confirmed,password FROM registrazioni WHERE email=$1';
     const values = [email];
     const result= await client.query(query,values);
     if(result.rows.length==0){
       throw Error("Email non presente");
     }
-    mailOptions2.to=email;
-    mailOptions2.text=mailOptions2Text+email;
-    transporter.sendMail(mailOptions2, function(error, info){
+    let pw=result.rows[0].password;
+    let emailpw= mailOptions2;
+    emailpw.to=email;
+    emailpw.text=mailOptions2Text+email+'&key='+pw+"AperitivoRomano";
+    transporter.sendMail(emailpw, function(error, info){
       if (error) {
      console.log(error);
       } else {
@@ -278,6 +340,34 @@ async function changePassReq(email){
     await client.end();
   }
 }
+async function checkEmailpw(email,pw){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT password FROM registrazioni WHERE email=$1';
+    const values = [email];
+    const result= await client.query(query,values);
+    if(result.rows.length==0){
+      throw Error("Email non presente");
+    }
+    else if(result.rows[0].password!=pw){
+      throw Error("Chiave errata");
+    }
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
 async function checkEmail(email){
   const client = new Client({
     user: 'postgres',
@@ -305,6 +395,7 @@ async function checkEmail(email){
     await client.end();
   }
 }
+
 
 
 async function confirmEmail(email){
@@ -364,9 +455,10 @@ async function inserisciRegistrazione(nome, email, hs){
 
     await client.query(query, values);
     console.log('Registrazione inserita con successo!');
-    mailOptions.to=email;
-    mailOptions.text=mailOptionsText+email;
-    transporter.sendMail(mailOptions, function(error, info){
+    let confirmEmail=mailOptions;
+    confirmEmail.to=email;
+    confirmEmail.text=mailOptionsText+email;
+    transporter.sendMail(confirmEmail, function(error, info){
       if (error) {
      console.log(error);
       } else {

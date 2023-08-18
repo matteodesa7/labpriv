@@ -1,0 +1,43 @@
+const urlParams = new URLSearchParams(window.location.search);
+const destinatario = urlParams.get('destinatario');
+if(destinatario){
+console.log("inviato");
+document.getElementById('email').value=destinatario;
+document.getElementById('url').value=window.location.href;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      const destinatario = urlParams.get('destinatario');
+      const key = urlParams.get('key').replace('AperitivoRomano','');
+      console.log(destinatario);
+      console.log(key);
+      
+      if(destinatario && key){
+          const params = new URLSearchParams();
+          params.append('destinatario', destinatario); // Aggiungi il nome del parametro (in questo caso, 'destinatario')   
+          params.append('key',key);
+          
+          fetch('/emailindb', {
+              method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
+              },
+              body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
+            })
+            .then(response => response.json())
+            .then(async data => {
+              console.log(data);
+              if(!data.done){
+                  window.location.href = "/Login/Login.html"; // Usa "=" invece di "/"
+              }
+            })
+            .catch(error => {
+              console.error('Errore:', error);
+            });
+  
+      }
+      else{
+        window.location.href = "/Login/Login.html"; // Usa "=" invece di "/"
+      }
+  });
