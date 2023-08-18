@@ -158,3 +158,30 @@ var customIcon = L.icon({
   console.log(placeToMarker);
   map.addLayer(markers);
   
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+const filtroMenuButton = document.getElementById('FiltroMenu');
+
+function updateFilterMenu() {
+    const selectedFilters = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+    const buttonText = selectedFilters.length > 0 ? selectedFilters.join(', ') : 'Seleziona Filtri';
+    filtroMenuButton.textContent = buttonText;
+}
+
+const cambiaPulsante = document.getElementById('cambiaPulsante');
+
+let isEtichettaA = true;
+
+cambiaPulsante.addEventListener('click', function() {
+    if (isEtichettaA) {
+        cambiaPulsante.textContent = 'U';
+    } else {
+        cambiaPulsante.textContent = 'A';
+    }
+
+    // Inverti il valore di isEtichettaA
+    isEtichettaA = !isEtichettaA;
+});
+  

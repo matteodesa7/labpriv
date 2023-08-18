@@ -771,19 +771,31 @@ var Descrizioni = {
   "I66": "Locale in cui puoi trovare prodotti italiani e di altre provenienze come il pregiatissimo prosciutto Iberico Pata Negra ed il prosciutto Serrano di qualità eccellente. €€",
   };
 
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  const filtroMenuButton = document.getElementById('FiltroMenu');
-  
-  function updateFilterMenu() {
-      const selectedFilters = Array.from(checkboxes)
-          .filter(checkbox => checkbox.checked)
-          .map(checkbox => checkbox.value);
-  
-      const buttonText = selectedFilters.length > 0 ? selectedFilters.join(', ') : 'Seleziona Filtri';
-      filtroMenuButton.textContent = buttonText;
-  }
-  
-  checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', updateFilterMenu);
-  });
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+const filtroMenuButton = document.getElementById('FiltroMenu');
+
+function updateFilterMenu() {
+    const selectedFilters = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+    const buttonText = selectedFilters.length > 0 ? selectedFilters.join(', ') : 'Seleziona Filtri';
+    filtroMenuButton.textContent = buttonText;
+}
+
+const cambiaPulsante = document.getElementById('cambiaPulsante');
+
+let isEtichettaA = true;
+
+cambiaPulsante.addEventListener('click', function() {
+    if (isEtichettaA) {
+        cambiaPulsante.textContent = 'U';
+    } else {
+        cambiaPulsante.textContent = 'A';
+    }
+
+    // Inverti il valore di isEtichettaA
+    isEtichettaA = !isEtichettaA;
+});
+
   
