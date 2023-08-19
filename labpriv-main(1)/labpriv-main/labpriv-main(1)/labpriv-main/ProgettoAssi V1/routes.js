@@ -104,13 +104,12 @@ router.get('/redirect', (req, res) => {
   res.redirect('/index.html');
 });
 
-router.post('/redirectgoogle', (req, res) => {
-  const credentials=req.body;
-  verifyToken(credentials);
+router.get('/auth/google/redirect',passport.authenticate('google'), (req, res) => {
+ res.send('hai ottenuto la callback URL');
 });
 
 router.get('/google',passport.authenticate('google',{
-  scope:['profile']
+  scope:['profile','email']
 }));
 
 
