@@ -104,8 +104,23 @@ router.get('/redirect', (req, res) => {
   res.redirect('/index.html');
 });
 
-router.get('/auth/google/redirect',passport.authenticate('google'), (req, res) => {
- res.send('hai ottenuto la callback URL');
+router.get('/auth/google/redirect',passport.authenticate('google'),async (req, res) => {
+const email = req.user.email+"Google";
+const nome=req.user.nome;
+await inserisciGoogle(email,nome);
+req.session.email=email;
+req.session.loggedIn=true;
+req.session.firstTime=true;
+req.session.nome=nome;
+await inserisciPreferiti(email,req);
+return res.redirect('/index.html');
+// Controllare che l'utente che sia già registrato:
+//caso registrato: accesso
+//caso non registrato: registrazione+accesso
+//p.s. con accesso si intende settaggio dei preferiti tramite funzione già esistente
+//redirect all'index dopo aver settato tutte le variabili di sessione
+
+
 });
 
 router.get('/google',passport.authenticate('google',{
@@ -118,6 +133,7 @@ router.get('/get-temporary-messages', (req, res) => {
   delete req.session.temporaryMessage;
   res.json({ temporaryMessage});
 });
+
 router.post('/access', async (req, res) => {
   try{
     await inserisciLogin(req.body.email,req.body.password,req); //query 1
@@ -528,20 +544,39 @@ async function loadDb(markerlist,email,placelist){
   }
 }
 
-async function verifyToken(credentials) {
-  try {
-    // Invia una richiesta al server di autenticazione di Google per convalidare il token
 
-    // Se la risposta contiene un campo "aud" corrispondente al client_id del tuo progetto,
-    // allora il token è valido e firmato correttamente
-    if (response.data.aud === '600149306723-juah0kfpbrj388h9vugt3rdm2mmk2nir.apps.googleusercontent.com') {
-      const publicKey = '... la tua chiave pubblica RS256 ...';
-      const decoded = jwt.verify(credentials.credential, publicKey, { algorithms: ['RS256'] });
-      console.log('Credenziali decodificate:', decoded);
-    } else {
-      console.log('Token JWT non valido.');
+//registrazione/login dell'utente da google
+async function inserisciGoogle(email,name) {
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+
+    const query = 'SELECT email FROM Google WHERE email = $1';
+    const values = [email];
+
+    const result= await client.query(query,values);
+
+    if (result.rows.length == 0){
+      //registrazione
+      const query = 'INSERT INTO Google(nome, email) VALUES ($1, $2)';
+      const values = [name,email];
+      await client.query(query,values);
+      console.log("Utente Registrato: "+name);
     }
-  } catch (error) {
-    console.error('Errore durante la convalida del token:', error.message);
+    //accesso
+    console.log("Utente già registrato, effettuare solo il Login");
+  }
+  catch(err){
+    throw err;
+  }
+  finally{
+    await client.end();
   }
 }
