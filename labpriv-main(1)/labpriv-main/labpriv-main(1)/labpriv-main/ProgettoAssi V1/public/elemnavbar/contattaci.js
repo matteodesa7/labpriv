@@ -46,37 +46,44 @@ form.addEventListener('submit', (event) => {
     }
   });
 
-  // Quando ritorna sulla pagina fa un controllo se è andato tutto a buon fine attraverso i localstorage settati da contattaci.php
-  var Sent = localStorage.getItem('Sent');
-  switch(Sent){
-    case 'true':
-        swal({
-            title: 'Grazie per il tuo feedback!',
-            text: 'Il tuo suggerimento verrà preso in considerazione, riceverai una risposta via mail',
-            icon: 'success',
-            ButtonText: 'OK'
-          });
-        localStorage.removeItem('Sent');
+  // Quando ritorna sulla pagina fa un controllo se è andato tutto a buon fine 
+  const queryString= window.location.search;
+  const params= new URLSearchParams(queryString);
+  if(params.has('sent')){
+    const Sent = params.get('sent');
+    switch(Sent){
+      case 'true':
+          swal({
+              title: 'Grazie per il tuo feedback!',
+              text: 'Il tuo suggerimento verrà preso in considerazione, riceverai una risposta via mail',
+              icon: 'success',
+              ButtonText: 'OK'
+            }).then(() => {
+              window.location.href="http://localhost:8000/";
+            });
+          break;
+      case 'false':
+          swal({
+              title: 'Errore',
+              text: 'La richiesta non è andata a buon fine, ritorno alla pagina iniziale',
+              icon: 'error',
+              ButtonText: 'OK'
+            }).then(() => {
+              window.location.href="http://localhost:8000/";
+            });
+          break;
+      case 'primary':
+          swal({
+              title: 'Errore',
+              text: 'Hai già consigliato questo luogo!',
+              icon: 'error',
+              ButtonText: 'OK'
+            }).then(() => {
+              window.location.href="http://localhost:8000/elemnavbar/contattaci.html";
+            });
+          break;
+      default:
+        window.location.href="http://localhost:8000/";
         break;
-    case 'false':
-        swal({
-            title: 'Errore',
-            text: 'La richiesta non è andata a buon fine',
-            icon: 'error',
-            ButtonText: 'OK'
-          });
-        localStorage.removeItem('Sent');
-        break;
-    case 'primary':
-        swal({
-            title: 'Errore',
-            text: 'Hai già consigliato questo luogo!',
-            icon: 'error',
-            ButtonText: 'OK'
-          });
-        localStorage.removeItem('Sent');
-        break;
-    default:
-        console.log("L'utente non ha ancora inviato nulla");
-        break;
+    }
   }

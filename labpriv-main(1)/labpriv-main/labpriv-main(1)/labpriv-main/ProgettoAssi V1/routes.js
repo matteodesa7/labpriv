@@ -51,6 +51,30 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/receiveSuggestion',async(req,res)=>{
+  console.log(req.body);
+  try{
+    var place=req.body.place.toLowerCase();
+    var zone= req.body.zone.toLowerCase();
+    await inserisciConsigliati(place,zone,req.body.email);
+    return res.redirect("/elemnavbar/contattaci.html?sent=true");
+  }
+  catch(err){
+    var queryErr; 
+    var errore=err.stack;
+    if(errore.includes('consigliati_pkey')){
+      queryErr="primary";
+
+    }
+    else{
+      queryErr="false";
+    }
+    console.log(errore);
+    return res.redirect("/elemnavbar/contattaci.html?sent="+queryErr);
+
+  }
+ 
+});
 router.post('/redirect', async (req, res) => {
   console.log(req.body);
   let nome = req.body.nome;
@@ -579,4 +603,30 @@ async function inserisciGoogle(email,name) {
   finally{
     await client.end();
   }
+}
+
+async function inserisciConsigliati(place,zone,email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+  try{
+    await client.connect();
+
+    const query = 'INSERT INTO Consigliati(nome, zona, email) VALUES ($1, $2, $3)';
+    const values = [place,zone,email];
+    console.log("Adesso inserisco i consigliati");
+    await client.query(query,values);
+    console.log("Consigliati inseriti con successo!");
+  }
+  catch(err){
+    throw err;
+  }
+  finally{
+    await client.end();
+  }
+
 }
