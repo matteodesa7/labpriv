@@ -6,8 +6,6 @@ const { Client } = require('pg');
 const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const jwt = require('jsonwebtoken');
-const axios = require('axios');
 const passport=require('passport');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -51,6 +49,37 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/adminverify',async (req, res) => {
+  console.log(req.body);
+  try{
+    await verificaMailAdmin(req.body.email);
+    var done=true;
+    return res.json({done});
+
+  }
+  catch(error){
+    var done=false;
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
+router.post('/verifyAdminToken',async (req, res) => {
+  console.log(req.body.token);
+  try{
+    await verificaTokenAdmin(req.body.email,req.body.token);
+    var done=true;
+    //req.session.admin=true;
+    return res.json({done});
+
+  }
+  catch(error){
+    var done=false;
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
 router.post('/receiveSuggestion',async(req,res)=>{
   console.log(req.body);
   try{
@@ -629,4 +658,66 @@ async function inserisciConsigliati(place,zone,email){
     await client.end();
   }
 
+}
+
+async function verificaMailAdmin(email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT email FROM registrazioni WHERE email=$1';
+    const values = [email];
+    const result= await client.query(query,values);
+    if(result.rows.length==0){
+      throw Error("Email non presente");
+    }
+    //Email presente possibile utente
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+async function verificaTokenAdmin(email,token){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT token FROM utentiprivilegiati WHERE email=$1';
+    const values = [email];
+    const result= await client.query(query,values);
+    if(result.rows.length==0){
+      throw Error("Email non presente");
+    }
+    hashedToken= result.rows[0].token;
+    var pwerrata=false;
+    await comparePasswords(token, hashedToken)
+    .then((result) => {
+    if (result) {
+      console.log('Password corretta. Accesso consentito.');
+    } else {
+      console.log('Password errata. Accesso negato.');
+      pwerrata=true;   
+    }
+   })
+   if(pwerrata) throw Error("password errata");
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
 }

@@ -130,3 +130,141 @@ function retrieveData(){
       window.location.href = "https://www.example.com/";
     }
   };
+
+
+
+//Modalità privilegiata
+let ctrlPressedCount = 0;
+let lastCtrlPressTime = 0;
+const ctrlCooldown = 500;
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Control') {
+    const currentTime = new Date().getTime();
+    ctrlPressedCount = (currentTime - lastCtrlPressTime > ctrlCooldown) ? 1 : ctrlPressedCount + 1;
+    lastCtrlPressTime = currentTime;
+    if (ctrlPressedCount >= 3) {
+      if(localStorage.getItem("loggedIn")){
+        var email = localStorage.getItem("email");
+        var purifiedEmail= email.replace("Google",'');
+        const params = new URLSearchParams();
+        params.append('email',purifiedEmail);
+        fetch('/adminverify', {
+          method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
+          },
+          body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
+        })
+        .then(response => response.json())
+        .then(async data => {
+          if(data.done===true){
+            console.log("Possibile utente privilegiato");
+            swal({
+              title: 'Attenzione',
+              text: 'Sei sicuro di voler accedere alla modalità privilegiata?',
+              icon: 'warning',
+              buttons: {
+                cancel: "No",
+                catch: {
+                  text: "Sì,entra in modalità privilegiata",
+                  value: "catch",
+                },
+              },
+            })
+            .then((value) => {
+              switch (value) {
+                case "catch":
+                  swal({
+                    title: 'Attenzione',
+                    text: 'Digita il codice da tastiera per accedere,hai 30 secondi dopo la conferma',
+                    icon: 'warning',
+                    buttons: {
+                      cancel: "Annulla",
+                      catch: {
+                        text: "Conferma",
+                        value: "catch",
+                      },
+                    },
+                  })
+                  .then((value) => {
+                    switch (value) {
+                      case "catch":
+                        console.log("settare i 30 secondi");
+                        var conta=0;
+                        var token='';
+                        var time= setTimeout(function() {
+                          document.removeEventListener('keydown', keydownListener);
+                          swal({
+                            title: 'Attenzione',
+                            text: 'tempo scaduto!',
+                            icon: 'warning',
+                            ButtonText: 'OK',
+                          });
+                        }, 30000);
+
+                        var keydownListener = function(event) {
+                          event.preventDefault();
+                          conta++;
+                          token+=event.key.toString();
+                          if (conta == 4) {
+                            clearTimeout(time);
+                            console.log(token);
+                            sendToken(token);
+                            return;
+                          } 
+                        };
+                        document.addEventListener('keydown', keydownListener);
+                        break;
+                    }
+                  });
+                  break;
+              }
+            });
+          }
+        })
+        .catch(error => {
+          console.error('Errore:', error);
+        });
+      }
+      ctrlPressedCount = 0;
+    }
+  }
+});
+
+function sendToken(token){
+  const params = new URLSearchParams();
+  params.append('token', token); // Aggiungi il nome del parametro (in questo caso, 'destinatario')
+  var purifiedEmail= localStorage.getItem('email').replace("Google",'');
+  params.append('email',purifiedEmail);
+  
+  fetch('/verifyAdminToken', {
+    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
+    },
+    body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
+  })
+  .then(response => response.json())
+  .then(async data => {
+    if(data.done==true){
+      swal({
+        title: 'Fatto!',
+        text: 'Accesso alla modalità amministratore garantita',
+        icon: 'success',
+        ButtonText: 'OK',
+      });
+    }
+    else if(data.done==false){
+      swal({
+        title: 'Errore',
+        text: 'Modalità amministratore non garantita',
+        icon: 'error',
+        ButtonText: 'OK',
+      });
+    }
+  })
+  .catch(error => {
+    console.error('Errore:', error);
+  });
+}
