@@ -366,14 +366,9 @@ for (var i = 1; i <= numLuoghi; i++) {
 
 
 //Filtro per la mappa
-const filterInput = document.querySelector("#filter");
 const listItems = document.querySelectorAll(".list-container li");
 
-filterInput.addEventListener("keyup", filterItems);
-
-function filterItems() {
-  const filterValue = filterInput.value.toLowerCase();
-
+/*function filterItems() {
   listItems.forEach(item => {
     const itemName = item.getAttribute("data-name").toLowerCase();
     if (itemName.includes(filterValue)) {
@@ -384,7 +379,7 @@ function filterItems() {
     }
   });
 }
-
+*/
 //Porzione di codice per gestire il reindirizzamento dalla pagina dei preferiti
 const pagina_di_riferimento = document.referrer.replace(/^.*?\/\/[^\/]+(\/.*)$/, "$1");
 if(pagina_di_riferimento){
@@ -412,4 +407,34 @@ function unflexList(){
   for(j=0;j<listItems.length;j++){
     listItems[j].style.display = "flex";
   }
+}
+
+// Seleziona il contenitore del dropdown
+var dropdownMenu = document.getElementById("menucheck");
+
+// Aggiungi un evento che intercetta i clic sui checkbox
+dropdownMenu.addEventListener("click", function(event) {
+  if (event.target.type === "checkbox") {
+    var checkbox = event.target;
+    var isChecked = checkbox.checked;
+    var value = checkbox.value;
+
+    console.log("Checkbox " + value + " è stato selezionato: " + isChecked);
+    // Esempio di utilizzo della funzione getSelectedCheckboxes
+    var selectedCheckboxes = getSelectedCheckboxes();
+    
+    console.log("Checkbox selezionati:", selectedCheckboxes);
+  }
+});
+
+// Funzione per ottenere i checkbox selezionati in un determinato momento
+function getSelectedCheckboxes() {
+  var checkboxes = document.querySelectorAll('input[name="filtro"]:checked');
+  var selectedValues = [];
+
+  checkboxes.forEach(function(checkbox) {
+    selectedValues.push(checkbox.value);
+  });
+
+  return selectedValues;
 }
