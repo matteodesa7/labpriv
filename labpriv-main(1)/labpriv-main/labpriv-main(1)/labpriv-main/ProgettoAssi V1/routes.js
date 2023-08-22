@@ -69,7 +69,7 @@ router.post('/verifyAdminToken',async (req, res) => {
   try{
     await verificaTokenAdmin(req.body.email,req.body.token);
     var done=true;
-    //req.session.admin=true;
+    req.session.admin=true;
     return res.json({done});
 
   }
@@ -79,6 +79,37 @@ router.post('/verifyAdminToken',async (req, res) => {
     return res.json({done});
   }
 });
+
+router.post('/verifyAdmin',async (req, res) => {
+  var Admin=req.session.admin;
+  var done=false;
+  if(Admin==true){
+    done=true;
+    console.log("Si è un admin");
+  }
+  return res.json({done});
+});
+
+router.post('/blockGoogle',async (req, res) => {
+  req.session.google="blocked";
+  done=true;
+  return res.json({done});
+});
+
+router.post('/unblockGoogle',async (req, res) => {
+  delete req.session.google;
+  done=true;
+  return res.json({done});
+});
+
+router.post('/checkGoogle',async (req, res) => {
+  var done=false;
+  if(req.session.google){
+    done=true;
+  }
+  return res.json({done});
+});
+
 
 router.post('/receiveSuggestion',async(req,res)=>{
   console.log(req.body);
@@ -259,6 +290,7 @@ router.post('/exit',async (req, res) => {
     await loadDb(JSON.parse(req.body.list),req.body.email,JSON.parse(req.body.list2));
     var done=true;
     delete req.session.loggedIn;
+    delete req.session.admin;
     return res.json({done});
   }
   catch(error){

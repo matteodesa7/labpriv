@@ -108,6 +108,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       checkBadLogIn();
       checkRegistered();
+      checkGoogle();
     })
     .catch(error => {
       console.error('Errore nella richiesta del temporary message:', error);
@@ -266,4 +267,36 @@ forgotPasswordButton.addEventListener("click", function () {
   testoPass.innerHTML="Hai ricordato la password? ";
 });
 
+function checkGoogle(){
+  fetch('/checkGoogle', {
+    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+  })
+  .then(response => response.json())
+  .then(async data => {
+    var googleButton = document.createElement("button");
+    googleButton.type = "button";
+    googleButton.className = "login-with-google-btn";
+    googleButton.textContent = "Accedi con Google";
 
+    // Decidi se aggiungerlo normale o disabilitato
+    var shouldDisable = true; // Cambia questo valore in base alla tua esigenza
+
+    if(data.done==true){
+      googleButton.disabled = true;
+    }
+    else{
+      console.log("Pulsante google funzionante");
+    }
+    // Aggiungi il pulsante al contenitore
+    var googleButtonContainer = document.getElementById("googleButtonContainer");
+    googleButtonContainer.appendChild(googleButton);
+  })
+  .catch(error => {
+    swal({
+      title: 'Errore',
+      icon: 'error',
+      ButtonText: 'OK',
+    });
+    console.error('Errore:', error);
+  });
+}

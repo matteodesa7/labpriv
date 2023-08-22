@@ -8,6 +8,25 @@ document.addEventListener("DOMContentLoaded", function(event) {
       const loggedIn=data.loggedIn;
       if(loggedIn){
         localStorage.setItem('loggedIn', true);
+        if(localStorage.getItem("Admin")){
+          fetch('/verifyAdmin', {
+            method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+          })
+          .then(response => response.json())
+          .then(async data => {
+            if(data.done==true){
+              console.log("Admin presente");
+            }
+            else if(data.done==false){
+              localStorage.removeItem("Admin");
+              console.log("Admin non presente");
+            }
+          })
+          .catch(error => {
+            console.error('Errore:', error);
+          });
+        }
+
         if(firstTime){
           localStorage.setItem('loggedIn','firstTime');
           await retrieveData(); //richiesta fetch per ottenere i dati delle scorse sessioni
@@ -18,6 +37,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
       console.error('Errore:', error);
     });
     checkLoggedIn();
+    if(localStorage.getItem("Admin")){
+    setAdminmode();
+    }
 });
 //Prendo il nome preciso della pagina in cui mi trovo per effettuare ulteriori controlli nelle varie funzioni qui presenti
 var pathname = window.location.pathname;  
@@ -26,13 +48,14 @@ var pageName = pathname.split('/').pop();
 function checkLoggedIn() {
     var loggedIn = localStorage.getItem("loggedIn");
     if (loggedIn !== null) {
-      var navLinks = document.querySelectorAll('.nav-link'); //Prendo i navlinks che sono presenti in tutte le pagine per settare e rendere visibili alcuni pulsanti
-      //setto il nome e rendo visibile la tendina dei preferiti
+
       var dropdownButton = document.getElementById("dropdownMenuButton");
       const nome= localStorage.getItem('nomeUtente');
       dropdownButton.textContent = nome;
+
       var dropdownButton = document.getElementById("dropdownMenuButton");
       dropdownButton.style.display = "block";
+
       var dropdownItems = document.querySelectorAll(".dropdown-item");
       dropdownItems[1].addEventListener("click",Exit);//Aggiungo la funzione d'uscita
       if(pageName=="favourite.html"){ //  Questo controllo serve a non far apparire il pulsante per raggiungere la pagina dei preferiti se già sei all'interno di essa
@@ -54,7 +77,6 @@ function checkLoggedIn() {
       var navLinks = document.querySelectorAll('.nav-link'); 
       navLinks[0].insertAdjacentHTML('beforeend', "<i class='fa-regular fa-user fa-2xl'></i>");
       navLinks[0].setAttribute('href', '/Login/Login.html');
-      console.log(navLinks);
     }
   }
 //Funzione per effettura il logout, prende tutti i dati necessari da salvare e li manda via fetch e poi elimina tutti ciò che è stato salvato nel localstorage sulla sessione dell'utente
@@ -253,7 +275,11 @@ function sendToken(token){
         text: 'Accesso alla modalità amministratore garantita',
         icon: 'success',
         ButtonText: 'OK',
+      })
+      .then(() => {
+        location.reload();
       });
+      localStorage.setItem("Admin",true);
     }
     else if(data.done==false){
       swal({
@@ -267,4 +293,130 @@ function sendToken(token){
   .catch(error => {
     console.error('Errore:', error);
   });
+}
+function setAdminmode(){
+
+  var dropdownItems = document.querySelectorAll(".dropdown-item");
+  var GestioneUtenti=dropdownItems[0];
+  GestioneUtenti.textContent="Gestisci utenti";
+  GestioneUtenti.setAttribute('href', './GestioneUtenti.html');
+
+  var logoutItem = dropdownItems[1];
+  var dropdownMenu = document.querySelector(".dropdown-menu")
+  var dropdownButton = document.getElementById("dropdownMenuButton");
+  dropdownButton.textContent="Amministratore";
+
+  var blockGoogle = document.createElement("a");
+  blockGoogle.className = "dropdown-item";
+  blockGoogle.href = "#"; // Imposta l'attributo href come desiderato
+  checkGoogle2().then(result => {
+    console.log("Risultato:", result);
+    if (result==true){
+      blockGoogle.textContent = "Sblocca accesso google"; // Testo del nuovo elemento
+      blockGoogle.addEventListener("click", function() {
+        unblockGoogleAccess(blockGoogle);
+      });
+    }
+    else{
+      blockGoogle.textContent = "Blocca accesso google"; // Testo del nuovo elemento
+      blockGoogle.addEventListener("click", function() {
+        blockGoogleAccess(blockGoogle);
+      });
+    }
+  });
+
+  dropdownMenu.insertBefore(blockGoogle, logoutItem);
+
+  var newDropdownItem = document.createElement("a");
+  newDropdownItem.className = "dropdown-item";
+  newDropdownItem.href = "#"; // Imposta l'attributo href come desiderato
+  newDropdownItem.textContent = "Modifica username"; // Testo del nuovo elemento
+  dropdownMenu.insertBefore(newDropdownItem, logoutItem);
+
+  var Recensioni = document.createElement("a");
+  Recensioni.className = "dropdown-item";
+  Recensioni.href = "#"; // Imposta l'attributo href come desiderato
+  Recensioni.textContent = "Gestisci Recensioni"; // Testo del nuovo elemento
+  dropdownMenu.insertBefore(Recensioni, logoutItem);
+
+}
+
+function blockGoogleAccess(blockGoogle){
+  fetch('/blockGoogle', {
+    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+  })
+  .then(response => response.json())
+  .then(async data => {
+    if(data.done==true){
+      swal({
+        title: 'Fatto!',
+        text: 'Accesso con google bloccato',
+        icon: 'success',
+        ButtonText: 'OK',
+      });
+      blockGoogle.removeEventListener("click", blockGoogleAccess);
+      blockGoogle.textContent="Sblocca accesso Google";
+      blockGoogle.addEventListener("click", function() {
+        unblockGoogleAccess(blockGoogle);
+      });
+    }
+  })
+  .catch(error => {
+    swal({
+      title: 'Errore',
+      icon: 'error',
+      ButtonText: 'OK',
+    });
+    console.error('Errore:', error);
+  });
+}
+
+function unblockGoogleAccess(blockGoogle){
+  fetch('/unblockGoogle', {
+    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+  })
+  .then(response => response.json())
+  .then(async data => {
+    if(data.done==true){
+      swal({
+        title: 'Fatto!',
+        text: 'Accesso con google sbloccato',
+        icon: 'success',
+        ButtonText: 'OK',
+      });
+    }
+    blockGoogle.removeEventListener("click", unblockGoogleAccess);
+    blockGoogle.textContent="Blocca accesso Google";
+    blockGoogle.addEventListener("click", function() {
+      blockGoogleAccess(blockGoogle);
+    });
+  })
+  .catch(error => {
+    swal({
+      title: 'Errore',
+      icon: 'error',
+      ButtonText: 'OK',
+    });
+    console.error('Errore:', error);
+  });
+}
+
+async function checkGoogle2() {
+  try {
+    const response = await fetch('/checkGoogle', {
+      method: 'POST',
+    });
+
+    const data = await response.json();
+    console.log("data: " + data.done);
+
+    if (data.done == true) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error('Errore:', error);
+    return false;
+  }
 }
