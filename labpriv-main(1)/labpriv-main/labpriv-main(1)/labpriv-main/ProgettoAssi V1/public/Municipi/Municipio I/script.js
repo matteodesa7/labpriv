@@ -700,6 +700,23 @@ var dataInsta = [
     "popupContent": "Fico by Baguetteria"
   }
 ];
+var Filtri = [];
+
+for (var i = 0; i < 66; i++) {
+  var nuovoFiltro = {
+    "Offerte speciali": Math.random() < 0.5,
+    "Ordina per prezzo crescente":  Math.floor(Math.random() * 5) + 1,
+    "Tipologia (vegano, vegetariano, senza glutine)": Math.random() < 0.5,
+    "Apericena": Math.random() < 0.5,
+    "Visione eventi sportivi": Math.random() < 0.5,
+    "DJ set": Math.random() < 0.5,
+    "Vista panoramica": Math.random() < 0.5,
+  };
+
+  Filtri.push(nuovoFiltro);
+}
+
+console.log(Filtri);
 
 //Dizionario con le descrizioni dei luoghi
 var Descrizioni = {

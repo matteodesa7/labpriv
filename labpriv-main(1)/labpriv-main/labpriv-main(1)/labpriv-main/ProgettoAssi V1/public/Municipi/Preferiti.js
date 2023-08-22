@@ -368,18 +368,30 @@ for (var i = 1; i <= numLuoghi; i++) {
 //Filtro per la mappa
 const listItems = document.querySelectorAll(".list-container li");
 
-/*function filterItems() {
+function filterItems(filtri) {
+  var count=0;
   listItems.forEach(item => {
-    const itemName = item.getAttribute("data-name").toLowerCase();
-    if (itemName.includes(filterValue)) {
-      item.style.display = "flex";
-    } 
-    else {
-      item.style.display = "none";
+
+    item.style.display="flex";
+
+    for (var i = 0; i < filtri.length; i++) {
+      var checkbox = filtri[i];
+    
+      console.log("filtro:", checkbox);
+    
+      if (!checkbox.includes("Ordina")) {
+        var display = Filtri[count][checkbox];
+        if (!display) {
+          item.style.display = "none";
+          break; // Esci dal ciclo for
+        }
+      }
     }
+    count++;
   });
 }
-*/
+
+
 //Porzione di codice per gestire il reindirizzamento dalla pagina dei preferiti
 const pagina_di_riferimento = document.referrer.replace(/^.*?\/\/[^\/]+(\/.*)$/, "$1");
 if(pagina_di_riferimento){
@@ -422,8 +434,7 @@ dropdownMenu.addEventListener("click", function(event) {
     console.log("Checkbox " + value + " è stato selezionato: " + isChecked);
     // Esempio di utilizzo della funzione getSelectedCheckboxes
     var selectedCheckboxes = getSelectedCheckboxes();
-    
-    console.log("Checkbox selezionati:", selectedCheckboxes);
+    filterItems(selectedCheckboxes);
   }
 });
 
