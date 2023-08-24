@@ -32,6 +32,8 @@ const mailOptions2 = {
   };
 const mailOptions2Text='Reimposta la tua password a questo link: http://localhost:8000/Login/Reimpostapw.html?destinatario=';
 
+const mailOptionsText3='Grazie per esserti iscritto al nostro sito. Scegli la tua password personale per confermare la registrazione: http://localhost:8000/Login/Reimpostapw.html?destinatario=';
+
 
 
 
@@ -49,6 +51,64 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/addUser',async (req, res) => {
+  try{
+    if(req.session.admin){
+      var Adminrequest=true;
+      const hs = await createHash(req.body.password);
+      await inserisciRegistrazione(req.body.nome,req.body.email,hs,Adminrequest);
+      delete req.session.AdminRequested;
+      var done=true;
+      return res.json({done});
+    }
+    var done=false;
+    return res.json({done});
+
+  }
+  catch(error){
+    var done=false;
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
+
+router.post('/updateUser',async (req, res) => {
+  try{
+    if(req.session.admin){
+      await deleteUser(req.body.email);
+      var done=true;
+      return res.json({done});
+    }
+    var done=false;
+    return res.json({done});
+
+  }
+  catch(error){
+    var done=false;
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
+router.post('/getUsers',async (req, res) => {
+  try{
+    if(req.session.admin){
+      var users= await getUsers();
+      var done=true;
+      return res.json({done,users});
+    }
+    var done=false;
+    return res.json({done});
+
+  }
+  catch(error){
+    var done=false;
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
 router.post('/adminverify',async (req, res) => {
   console.log(req.body);
   try{
@@ -163,7 +223,7 @@ router.post('/redirect', async (req, res) => {
       //console.log('Valid: %s', valid);    // true
 
       // Qui inserisci il codice per inserire la registrazione nel database
-      await inserisciRegistrazione(nome, email, hs);
+      await inserisciRegistrazione(nome, email, hs , false);
       
       // Imposta una variabile di sessione temporanea
       req.session.temporaryMessage = "tobeConfirmed"; // Cambia il messaggio come preferisci
@@ -453,7 +513,7 @@ function isValidEmail(email) {
   return emailRegex.test(email);
 }
 //La registrazione dell'utente
-async function inserisciRegistrazione(nome, email, hs){
+async function inserisciRegistrazione(nome, email, hs, Adminrequest){
   const client = new Client({
     user: 'postgres',
     host: 'localhost', 
@@ -470,7 +530,13 @@ async function inserisciRegistrazione(nome, email, hs){
     await client.query(query, values);
     console.log('Registrazione inserita con successo!');
     mailOptions.to=email;
-    mailOptions.text=mailOptionsText+email;
+    if(Adminrequest){
+      mailOptions.text=mailOptionsText3+email+"&key="+hs+"AdminRequest";;
+    }
+    else{
+      mailOptions.text=mailOptionsText+email+"&key="+hs+"AperitivoRomano";;
+    }
+
     transporter.sendMail(mailOptions, function(error, info){
       if (error) {
      console.log(error);
@@ -746,6 +812,60 @@ async function verificaTokenAdmin(email,token){
     }
    })
    if(pwerrata) throw Error("password errata");
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+async function getUsers(){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT nome,email,confirmed,free FROM registrazioni UNION SELECT nome,email,true as confirmed,free FROM google';
+    const result= await client.query(query);
+    // Creiamo un array per immagazzinare i risultati
+    const usersArray = [];
+    // Iteriamo attraverso ogni riga restituita dalla query e la inseriamo nell'array
+    for (const row of result.rows) {
+          usersArray.push(row);
+    }
+    return usersArray;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+async function deleteUser(email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    var place="registrazioni";
+    if(email.includes("Google")){
+      place="google";
+    }
+    const query = 'DELETE FROM '+place+' WHERE email=$1';
+    const values=[email];
+    await client.query(query,values);
   }
   catch (err) {
     throw err;

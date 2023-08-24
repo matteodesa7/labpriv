@@ -339,6 +339,12 @@ function setAdminmode(){
   Recensioni.textContent = "Gestisci Recensioni"; // Testo del nuovo elemento
   dropdownMenu.insertBefore(Recensioni, logoutItem);
 
+  var Consigliati = document.createElement("a");
+  Consigliati.className = "dropdown-item";
+  Consigliati.href = "#"; // Imposta l'attributo href come desiderato
+  Consigliati.textContent = "Gestisci Consigliati"; // Testo del nuovo elemento
+  dropdownMenu.insertBefore(Consigliati, logoutItem);
+
 }
 
 function blockGoogleAccess(blockGoogle){
@@ -408,7 +414,6 @@ async function checkGoogle2() {
     });
 
     const data = await response.json();
-    console.log("data: " + data.done);
 
     if (data.done == true) {
       return true;

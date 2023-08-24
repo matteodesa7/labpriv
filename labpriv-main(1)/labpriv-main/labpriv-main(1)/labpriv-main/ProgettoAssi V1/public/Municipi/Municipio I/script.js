@@ -702,7 +702,7 @@ var dataInsta = [
 ];
 var Filtri = [];
 
-for (var i = 0; i < 66; i++) {
+for (var i = 0; i <data.length; i++) {
   var nuovoFiltro = {
     "Offerte speciali": Math.random() < 0.5,
     "Ordina per prezzo crescente":  Math.floor(Math.random() * 5) + 1,
