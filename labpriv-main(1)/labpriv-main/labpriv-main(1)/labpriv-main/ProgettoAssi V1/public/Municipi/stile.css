@@ -121,7 +121,7 @@ body {
 /*Menù a discesa sulla navbar con nome utente*/
 #usermenu {
   position: absolute;
-  left: 85%;
+  left: 80%;
   background-color: rgb(255, 196, 157);
 }
 /*Azione entrambi i bottoni se ci passi sopra con il cursore*/
