@@ -51,6 +51,29 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/ban_or_PardonUser',async (req, res) => {
+  try{
+    if(req.session.admin){
+      var hasGoogle=req.body.email.includes("Google");
+      var state = await ban_pardonUser(req.body.email,hasGoogle);
+      var done=true;
+      return res.json({done,state});
+    }
+    var done=false;
+    return res.json({done});
+
+  }
+  catch(error){
+    var done=false;
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
+
+
+
+
 router.post('/addUser',async (req, res) => {
   try{
     if(req.session.admin){
@@ -249,20 +272,26 @@ router.get('/redirect', (req, res) => {
 });
 
 router.get('/auth/google/redirect',passport.authenticate('google'),async (req, res) => {
-const email = req.user.email+"Google";
-const nome=req.user.nome;
-await inserisciGoogle(email,nome);
-req.session.email=email;
-req.session.loggedIn=true;
-req.session.firstTime=true;
-req.session.nome=nome;
-await inserisciPreferiti(email,req);
-return res.redirect('/index.html');
-// Controllare che l'utente che sia già registrato:
-//caso registrato: accesso
-//caso non registrato: registrazione+accesso
-//p.s. con accesso si intende settaggio dei preferiti tramite funzione già esistente
-//redirect all'index dopo aver settato tutte le variabili di sessione
+try{
+  const email = req.user.email+"Google";
+  const nome=req.user.nome;
+  await inserisciGoogle(email,nome);
+  req.session.email=email;
+  req.session.loggedIn=true;
+  req.session.firstTime=true;
+  req.session.nome=nome;
+  await inserisciPreferiti(email,req);
+  return res.redirect('/index.html');
+}
+catch(err){
+  var error= err.stack;
+  console.log(error);
+  if(error.includes("bloccato")){
+    req.session.temporaryMessage="blocked";
+  }
+  return res.redirect('/Login/Login.html');
+}
+
 
 
 });
@@ -297,6 +326,9 @@ router.post('/access', async (req, res) => {
     }
     if(errore.includes("Email non confermata")){
       req.session.temporaryMessage = "notConfirmed";
+    }
+    if(errore.includes("bloccato")){
+      req.session.temporaryMessage = "blocked";
     }
     console.log(req.session.temporaryMessage);
     return res.redirect('/Login/Login.html');
@@ -359,7 +391,6 @@ router.post('/exit',async (req, res) => {
 });
 
 router.post('/confirmemail',async (req, res) => {
-  console.log(req.body)
   try{
     await confirmEmail(req.body.destinatario);
     var done=true;
@@ -372,18 +403,16 @@ router.post('/confirmemail',async (req, res) => {
 
 
 router.post('/checkemail',async (req, res) => {
-  console.log(req.body)
   try{
-    var done;
-    await checkEmail(req.body.destinatario);
-    done=true;
+    var done=false;
+    done=await checkEmail(req.body.destinatario,req.body.hpw,req.body.action); 
     return res.json({done});
   }
   catch(error){
-    done=false;
     return res.json({done});
   }
 });
+
 router.post('/recuperoPass',async (req, res) => {
   try{
     await changePassReq(req.body.email);
@@ -396,6 +425,29 @@ router.post('/recuperoPass',async (req, res) => {
   }
 });
 
+router.post('/reset-password',async (req, res) => {
+  try{
+    var pw=req.body.password;
+    if (pw.length < 8 || !/[A-Z]/.test(pw) || !/[^a-zA-Z0-9]/.test(pw)) {
+      console.log("Errore di password");
+      return res.redirect("/Login/Login.html");
+    } 
+    else {      
+    // genero l'hash partendo dalla password
+    const hs = await createHash(pw);
+    console.log(req.body.email);
+    await updatePw(hs,req.body.email);
+    console.log("Password aggiornata");
+    req.session.temporaryMessage="updatedPw";
+    return res.redirect('/Login/Login.html');
+    }
+  
+  }
+  catch(error){
+    req.session.temporaryMessage="recPwNS";
+    return res.redirect('/Login/Login.html');
+  }
+});
 
 
 
@@ -421,14 +473,15 @@ async function changePassReq(email){
 
   try{
     await client.connect();
-    const query = 'SELECT confirmed FROM registrazioni WHERE email=$1';
+    const query = 'SELECT password FROM registrazioni WHERE email=$1';
     const values = [email];
     const result= await client.query(query,values);
     if(result.rows.length==0){
       throw Error("Email non presente");
     }
+    var hs=result.rows[0].password;
     mailOptions2.to=email;
-    mailOptions2.text=mailOptions2Text+email;
+    mailOptions2.text=mailOptions2Text+email+"&key="+hs+"AperitivoRomano";
     transporter.sendMail(mailOptions2, function(error, info){
       if (error) {
      console.log(error);
@@ -443,26 +496,46 @@ async function changePassReq(email){
     await client.end();
   }
 }
-async function checkEmail(email){
+async function checkEmail(email,hpw,action){
   const client = new Client({
     user: 'postgres',
     host: 'localhost', 
     database: 'Registrazioni',
     password: 'lallacommit',
     port: 5432, // La porta di default per PostgreSQL è 5432
-  });
+    });
 
   try{
+    var pureKey;
+    var replace='';
+    if(hpw.includes('Aperitivo')){
+      replace="AperitivoRomano";
+    }
+    else if(hpw.includes('Admin')){
+      replace="AdminRequest";
+    }
+    pureKey=hpw.replace(replace,'');
+
+
     await client.connect();
-    const query = 'SELECT confirmed FROM registrazioni WHERE email=$1';
-    const values = [email];
-    const result= await client.query(query,values);
-    if(result.rows.length==0){
+    const querymail='SELECT password FROM registrazioni where email=$1';
+    const value=[email];
+    var commonresult=await client.query(querymail,value);
+    if(commonresult.rows.length==0){
       throw Error("Email non presente");
     }
-    else if(result.rows[0].confirmed){
-      throw Error("Verifica già effettuata");
+    if(commonresult.rows[0].password!=pureKey){
+      throw Error("Richiesta non riconosciuta");
     }
+    if(action.includes("check")){
+      const query = 'SELECT confirmed FROM registrazioni WHERE email=$1';
+      const values = [email];
+      const result= await client.query(query,values);
+      if(result.rows[0].confirmed){
+        throw Error("Verifica già effettuata");
+      }
+    }
+    return true;
   }
   catch (err) {
     throw err;
@@ -563,7 +636,7 @@ async function inserisciLogin(email,pw,req) {
   try{
     await client.connect();
 
-    const query = 'SELECT nome,password,confirmed FROM Registrazioni WHERE email = $1';
+    const query = 'SELECT nome,password,confirmed,free FROM Registrazioni WHERE email = $1';
     const values = [email];
 
     const result= await client.query(query,values);
@@ -574,6 +647,10 @@ async function inserisciLogin(email,pw,req) {
     const Confirmed= result.rows[0].confirmed;
     if(!Confirmed){
       throw Error("Email non confermata");
+    }
+    const Free=result.rows[0].free;
+    if(!Free){
+      throw Error("Utente bloccato");
     }
     const hpw= result.rows[0].password;
     var name=result.rows[0].nome;
@@ -721,8 +798,16 @@ async function inserisciGoogle(email,name) {
       await client.query(query,values);
       console.log("Utente Registrato: "+name);
     }
-    //accesso
-    console.log("Utente già registrato, effettuare solo il Login");
+    else{
+    //accesso, controllo che l'utente non sia bloccato
+      const statequery = 'SELECT free FROM Google WHERE email=$1';
+      const values2= [email];
+      const result2= await client.query(statequery,values2);
+      var state=result2.rows[0].free;
+      if(!state){
+        throw Error("Account bloccato");
+      }
+    }
   }
   catch(err){
     throw err;
@@ -865,6 +950,61 @@ async function deleteUser(email){
     }
     const query = 'DELETE FROM '+place+' WHERE email=$1';
     const values=[email];
+    await client.query(query,values);
+    const query2 = 'DELETE FROM preferiti WHERE email=$1';
+    await client.query(query2,values);
+
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+async function ban_pardonUser(email,hasGoogle){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    var place="registrazioni";
+    if(hasGoogle){
+      place="google";
+    }
+    const query = 'UPDATE '+place+' SET free=NOT free WHERE email=$1';
+    const values=[email];
+    await client.query(query,values);
+    const statequery = 'SELECT free FROM '+place+' WHERE email=$1';
+    const result= await client.query(statequery,values);
+    var state=result.rows[0].free;
+    return state;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+}
+
+async function updatePw(pw,email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'UPDATE registrazioni SET password=$1 WHERE email=$2';
+    const values=[pw,email];
     await client.query(query,values);
   }
   catch (err) {

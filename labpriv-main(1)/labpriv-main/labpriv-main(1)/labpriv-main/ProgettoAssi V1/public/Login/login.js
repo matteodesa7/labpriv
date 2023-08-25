@@ -89,6 +89,9 @@ document.addEventListener('DOMContentLoaded', function () {
         else if(temporaryMessage=="emailnontrovata"){
           localStorage.setItem("badLogin","email");
         }
+        else if(temporaryMessage=="blocked"){
+          localStorage.setItem("badLogin","blocked");
+        }
         else if(temporaryMessage=='recPwS'){
           swal({
             title: 'Fatto',
@@ -228,6 +231,16 @@ function checkBadLogIn(){
           }).then(() => {
             removeL();
           }); 
+    break;
+    case 'blocked':
+      swal({
+        title: 'Accesso negato',
+        text: 'Siamo spiacenti... risulta che questo account è stato bloccato',
+        icon: 'warning',
+        ButtonText: 'OK',
+      }).then(() => {
+        removeL();
+      }); 
   }
 }
 

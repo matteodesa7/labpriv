@@ -79,12 +79,11 @@ function setCards(page,MaxPage,n) {
 
             if(users[i].free){
               linkTextCard.textContent = "Blocca Utente";
-              linkTextCard.addEventListener('click', ban);
             }
             else{
               linkTextCard.textContent = "Sblocca Utente";
-              linkTextCard.addEventListener('click', sban);
             }
+            linkTextCard.addEventListener('click', ban_or_pardon);
             linkTextCard.href=i;
             linkTextCard2.href=i;
             //Aggiungo un listener al link in modo tale da salvarmi l'id di tale municipio se l'utente dovesse cliccare sul link
@@ -120,8 +119,7 @@ function azzeraCards(){
         sezioni[y].querySelector('.card-title').textContent="";
         sezioni[y].querySelector('.card-link a:nth-child(1)').textContent="";
         sezioni[y].querySelector('.card-link a:nth-child(1)').href="";
-        sezioni[y].querySelector('.card-link a:nth-child(1)').removeEventListener("click",ban);
-        sezioni[y].querySelector('.card-link a:nth-child(1)').removeEventListener("click",sban);
+        sezioni[y].querySelector('.card-link a:nth-child(1)').removeEventListener("click",ban_or_pardon);
         sezioni[y].querySelector('.card-link a:nth-child(2)').textContent="Aggiungi utente";
         sezioni[y].querySelector('.card-link a:nth-child(2)').href="";
         sezioni[y].querySelector('.card-link a:nth-child(2)').removeEventListener('click',getRidof);
@@ -247,25 +245,63 @@ fetch('/addUser', {
 });
 
 }
-function ban(event){ 
+function ban_or_pardon(event){ 
   event.preventDefault();
   const pos = this.href.replace(/^.*\//, ''); //Pos sarebbe la posizione esatta del luogo nei due localstorage
   const StringList=localStorage.getItem("Utenti");
   var utenti=JSON.parse(StringList);
-  utenti[pos].free=false;
+  var email=utenti[pos].email;
+  const params = new URLSearchParams();
+  params.append('email', email); // Aggiungi il nome del parametro (in questo caso, 'destinatario')
+  fetch('/ban_or_PardonUser', {
+    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
+    },
+    body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
+  })
+  .then(response => response.json())
+  .then(async data => {
+    if(data.done){
+      utenti[pos].free=data.state;
+      localStorage.setItem("Utenti",JSON.stringify(utenti));
+      init();
+    }
+  })
+  .catch(error => {
+    swal("Errore", "Non è stato possibile bloccare/sbloccare l'utente", "error");
+    console.error('Errore:', error);
+  });
 
-  localStorage.setItem("Utenti",JSON.stringify(utenti));
-  init();
 
 
 }
-function sban(event){
+/*function sban(event){
   event.preventDefault();
   const pos = this.href.replace(/^.*\//, ''); //Pos sarebbe la posizione esatta del luogo nei due localstorage
   const StringList=localStorage.getItem("Utenti");
   var utenti=JSON.parse(StringList);
-  utenti[pos].free=true;
 
-  localStorage.setItem("Utenti",JSON.stringify(utenti));
-  init();
-}
+  var email=utenti[pos].email;
+  const params = new URLSearchParams();
+  params.append('email', email); // Aggiungi il nome del parametro (in questo caso, 'destinatario')
+  fetch('/pardonUser', {
+    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
+    },
+    body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
+  })
+  .then(response => response.json())
+  .then(async data => {
+    if(data.done){
+      utenti[pos].free=true;
+      localStorage.setItem("Utenti",JSON.stringify(utenti));
+      init();
+    }
+  })
+  .catch(error => {
+    swal("Errore", "Non è stato possibile sbloccare l'utente", "error");
+    console.error('Errore:', error);
+  });
+}*/

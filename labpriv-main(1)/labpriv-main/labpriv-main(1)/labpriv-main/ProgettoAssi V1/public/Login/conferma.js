@@ -25,11 +25,13 @@ document.getElementById("btnConfermaEmail").addEventListener("click", function (
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const destinatario = urlParams.get('destinatario');
-    if(destinatario){
+    const pw=urlParams.get('key');
+    if(destinatario && pw){
         console.log("da confermare");
         const params = new URLSearchParams();
         params.append('destinatario', destinatario); // Aggiungi il nome del parametro (in questo caso, 'destinatario')   
-        
+        params.append('hpw',pw);
+        params.append('action','check');
         
         fetch('/checkemail', {
             method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
