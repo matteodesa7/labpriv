@@ -854,7 +854,7 @@ async function verificaMailAdmin(email){
 
   try{
     await client.connect();
-    const query = 'SELECT email FROM registrazioni WHERE email=$1';
+    const query = 'SELECT email FROM utentiprivilegiati WHERE email=$1';
     const values = [email];
     const result= await client.query(query,values);
     if(result.rows.length==0){
