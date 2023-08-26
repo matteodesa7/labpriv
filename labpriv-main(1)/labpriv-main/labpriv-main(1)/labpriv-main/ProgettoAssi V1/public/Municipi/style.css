@@ -57,18 +57,54 @@
     margin-bottom: 20px;
   }
 
+  /*Bottone Seleziona Filtro*/
   #FiltroMenu {
     margin-left: 20px;
     margin-top: 20px;
-    background-color: rgb(255, 196, 157);
-    border: 2px solid #999898;
+    background-color: transparent;
+    border: 1px solid #999898;
     border-radius: 10px;
-    color: black;
+    color: rgba(0,0,0,.5);
+    text-decoration: underline;
   }
 
-  #menudiscesa{
-    width: auto;
-    height: auto;
+  /*Bottone Seleziona Filtro se ci passi sopra con il cursore*/
+  #FiltroMenu:hover {
+    background-color: rgb(255, 196, 157);
+    color: #fff;
+  }
+
+  /*Menu a discesa dei filtri*/
+  #menucheck.show {
+    display: block; /* Imposta il menu a blocco per posizionare gli item uno sotto l'altro */
+    padding: 10px; /* Aggiunge spazio tra gli item */
+    width: 200px; /* Imposta una larghezza fissa al contenitore */
+    margin-left: 3px;
+    max-height: 250px; /* Imposta l'altezza massima del menu */
+    overflow-y: auto; /* Aggiungi una scrollbar quando il contenuto supera l'altezza massima */
+    background-color: rgb(255, 196, 157);
+  }
+
+  label.filtro {
+    display: block;
+    margin-bottom: 5px;
+    cursor: pointer;
+  }
+
+  input[type="checkbox"] {
+    margin-right: 10px; /* Aggiunge spazio tra il quadrato della checkbox e il testo dell'etichetta */
+  }
+
+  #menucheck.show::-webkit-scrollbar {
+    width: 10px;
+  }
+  #menucheck.show::-webkit-scrollbar-thumb {
+    background: #fc9b00;
+    border-radius: 10px;
+  }
+  #menucheck.show::-webkit-scrollbar-track {
+    background: #ccc;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
   }
 
   /*Stile footer e elementi del footer*/

@@ -24,12 +24,14 @@
         <a class="navbar-brand mr-auto" href="../../index.html">
             <h3>Municipio I</h3>
         </a>
-			
+		
+        <button class="circular-button" id="cambiaPulsante">A</button>
+
         <ul class="nav-item dropdown ml-auto" style = "margin-bottom: 0px;">
             <button class="btn btn-secondary dropdown-toggle mr-auto" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 
             </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+            <div class="dropdown-menu dropdown-menu-right" id="usermenu" aria-labelledby="dropdownMenuButton">
                 <a class="dropdown-item" href="/Favourite/favourite.html">Preferiti</a>
                 <a class="dropdown-item" href="#">Logout</a>
             </div>
@@ -64,7 +66,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Municipi<span class="sr-only">(current)</span></a>
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #fcc100">
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: lemonchiffon;">
                         <a class="dropdown-item" href="./Municipio I.html">I Municipio</a>
                         <a class="dropdown-item" href="../Municipio II/Municipio II.html">II Municipio</a>
                         <a class="dropdown-item" href="../Municipio III/Municipio III.html">III Municipio</a>
@@ -104,18 +106,26 @@
                     <!-- Toggler per il dropdown-menu -->
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="FiltroMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Seleziona filtro
+                            SELEZIONA FILTRO
                         </button>
                         <div class="dropdown-menu" id="menucheck" aria-labelledby="FiltroMenu">
                             <!-- Contenuto del dropdown-menu con checkbox -->
                             <label><input type="checkbox" name="filtro" value="Offerte speciali">Offerte speciali</label>
                             <label><input type="checkbox" name="filtro" value="Ordina per prezzo crescente">Ordina per prezzo crescente</label>
+                            <label><input type="checkbox" name="filtro" value="Ordina per prezzo decrescente">Ordina per prezzo decrescente</label>
                             <label><input type="checkbox" name="filtro" value="Tipologia (vegano, vegetariano, senza glutine)">Tipologia (vegano, vegetariano, senza glutine)</label>
                             <label><input type="checkbox" name="filtro" value="Apericena">Apericena</label>
                             <label><input type="checkbox" name="filtro" value="Visione eventi sportivi">Visione eventi sportivi</label>
                             <label><input type="checkbox" name="filtro" value="DJ set">DJ set</label>
                             <label><input type="checkbox" name="filtro" value="Vista panoramica">Vista panoramica</label>
-                            <label><input type="checkbox" name="filtro" value="Distanza da punti di interesse">Distanza da punti di interesse</label>
+                            <label><input type="checkbox" name="filtro" value="Prenotabile con The Fork">Prenotabile con The Fork</label>
+                            <label><input type="checkbox" name="filtro" value="Pagina Instagram presente">Pagina Instagram presente</label>
+                            <label><input type="checkbox" name="filtro" value="Valutazione Utenti">Valutazione Utenti</label>
+                            <label><input type="checkbox" name="filtro" value="Ordina per nome">Ordina per nome</label>
+                            <label><input type="checkbox" name="filtro" value="Aperti ora">Aperti ora</label>
+                            <label><input type="checkbox" name="filtro" value="Accessibile in sedia a rotelle">Accessibile in sedia a rotelle</label>
+                            <label><input type="checkbox" name="filtro" value="Ammette animali">Ammette animali</label>
+                            <label><input type="checkbox" name="filtro" value="All you can eat">All you can eat</label>
                         </div>
                     </div>
                 </div>

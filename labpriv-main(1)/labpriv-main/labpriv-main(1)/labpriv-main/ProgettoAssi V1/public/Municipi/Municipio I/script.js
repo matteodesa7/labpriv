@@ -786,21 +786,54 @@ var Descrizioni = {
   "I64": "Puoi scegliere la combinazione che preferisci fra oltre 100 snack diversi. Ogni box è unica, realizzata con prodotti freschi e materie prime di altissima qualità, in base alla stagionalità e alla reperibilità dei prodotti. €€",
   "I65": "Tutti i tipi di drink accompagnati dalle storiche tartine, dai nuovissimi crostini e da tantissime specialità gastromoniche di prima scelta. €€",
   "I66": "Locale in cui puoi trovare prodotti italiani e di altre provenienze come il pregiatissimo prosciutto Iberico Pata Negra ed il prosciutto Serrano di qualità eccellente. €€",
-  };
+};
 
-  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-  const filtroMenuButton = document.getElementById('FiltroMenu');
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+const filtroMenuButton = document.getElementById('FiltroMenu');
+
+function updateFilterMenu() {
+    const selectedFilters = Array.from(checkboxes)
+        .filter(checkbox => checkbox.checked)
+        .map(checkbox => checkbox.value);
+
+    const buttonText = selectedFilters.length > 0 ? selectedFilters.join(', ') : 'Seleziona Filtri';
+    filtroMenuButton.textContent = buttonText;
+}
+
+// Aggiungi un gestore di eventi al menu dei filtri
+filtroMenuButton.addEventListener('click', function(event) {
+    // Esegui l'aggiornamento del testo del pulsante
+    updateFilterMenu();
+});
+
+// Aggiungi un gestore di eventi alle caselle di controllo
+checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('click', function(event) {
+        // Impedisci la propagazione dell'evento al pulsante del menu
+        event.stopPropagation();
+
+        // Esegui l'aggiornamento del testo del pulsante
+        updateFilterMenu();
+    });
+});
+
+
   
-  function updateFilterMenu() {
-      const selectedFilters = Array.from(checkboxes)
-          .filter(checkbox => checkbox.checked)
-          .map(checkbox => checkbox.value);
-  
-      const buttonText = selectedFilters.length > 0 ? selectedFilters.join(', ') : 'Seleziona Filtri';
-      filtroMenuButton.textContent = buttonText;
-  }
-  
-  checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', updateFilterMenu);
-  });
+
+
+const cambiaPulsante = document.getElementById('cambiaPulsante');
+
+let isEtichettaA = true;
+
+cambiaPulsante.addEventListener('click', function() {
+    if (isEtichettaA) {
+        cambiaPulsante.textContent = 'U';
+    } else {
+        cambiaPulsante.textContent = 'A';
+    }
+
+    // Inverti il valore di isEtichettaA
+    isEtichettaA = !isEtichettaA;
+});
+ 
   
