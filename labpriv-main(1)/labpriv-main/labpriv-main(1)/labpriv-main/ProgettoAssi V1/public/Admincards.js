@@ -226,7 +226,7 @@ const params = new URLSearchParams();
 params.append('email', email);
 params.append('nome',nome);
 params.append('password',password);
-console.log("PreFetch");
+
 fetch('/addUser', {
   method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
   headers: {
@@ -276,32 +276,3 @@ function ban_or_pardon(event){
 
 
 }
-/*function sban(event){
-  event.preventDefault();
-  const pos = this.href.replace(/^.*\//, ''); //Pos sarebbe la posizione esatta del luogo nei due localstorage
-  const StringList=localStorage.getItem("Utenti");
-  var utenti=JSON.parse(StringList);
-
-  var email=utenti[pos].email;
-  const params = new URLSearchParams();
-  params.append('email', email); // Aggiungi il nome del parametro (in questo caso, 'destinatario')
-  fetch('/pardonUser', {
-    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
-    },
-    body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
-  })
-  .then(response => response.json())
-  .then(async data => {
-    if(data.done){
-      utenti[pos].free=true;
-      localStorage.setItem("Utenti",JSON.stringify(utenti));
-      init();
-    }
-  })
-  .catch(error => {
-    swal("Errore", "Non è stato possibile sbloccare l'utente", "error");
-    console.error('Errore:', error);
-  });
-}*/

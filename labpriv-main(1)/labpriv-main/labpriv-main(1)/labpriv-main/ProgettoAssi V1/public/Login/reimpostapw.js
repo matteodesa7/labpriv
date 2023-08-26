@@ -22,7 +22,11 @@ document.addEventListener('DOMContentLoaded', function () {
             else{
                 var email=document.getElementById('email');
                 email.value=destinatario;
-                console.log(email.value);
+                if(hpw.includes('Admin')){
+                  var fromAdmin=document.getElementById('fromAdmin');
+                  fromAdmin.value='true';
+                  console.log(fromAdmin.value);
+                }
             }
           })
           .catch(error => {

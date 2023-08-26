@@ -19,7 +19,7 @@ const transporter = nodemailer.createTransport({
 const mailOptions = {
     from: "progettolab7@gmail.com", // L'indirizzo email da cui invii l'email (stesso dell'auth user)
     to: "",
-    subject: 'Benvenuto al nostro sito!',
+    subject: '',
     text: '',
   };
 const mailOptionsText='Grazie per esserti iscritto al nostro sito. Conferma la mail per accedere: http://localhost:8000/Login/conferma.html?destinatario=';
@@ -27,13 +27,14 @@ const mailOptionsText='Grazie per esserti iscritto al nostro sito. Conferma la m
 const mailOptions2 = {
     from: "progettolab7@gmail.com", // L'indirizzo email da cui invii l'email (stesso dell'auth user)
     to: "",
-    subject: 'Reimposta la tua password',
+    subject: '',
     text: '',
   };
 const mailOptions2Text='Reimposta la tua password a questo link: http://localhost:8000/Login/Reimpostapw.html?destinatario=';
 
 const mailOptionsText3='Grazie per esserti iscritto al nostro sito. Scegli la tua password personale per confermare la registrazione: http://localhost:8000/Login/Reimpostapw.html?destinatario=';
 
+const mailOptionsText4='Grazie per aver recensito il nostro sito! La recensione verrà pubblicata dopo adeguati controlli e riceverà una mail di conferma';
 
 
 
@@ -51,6 +52,39 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/getApprovedReviews',async (req, res) => {
+  try{
+      var approvedReviews=[];
+      approvedReviews=await getReviews();
+      return res.json({approvedReviews});
+  }
+  catch(error){
+    console.log(error.stack);
+    return res.json({approvedReviews});
+  }
+});
+
+
+
+router.post('/inserisciRecensioni',async (req, res) => {
+  try{
+      await sendReviews(req.body.nome,req.body.cognome,req.body.email,req.body.numero,req.body.recensione);
+      return res.redirect("http://localhost:8000/elemnavbar/diconodinoi.html?state=true");
+  }
+  catch(error){
+    var errore=error.stack;
+    var state='false';
+    if(errore.includes('recensioni_pkey')){
+      state='primary';
+    }
+    console.log(errore);
+    return res.redirect("http://localhost:8000/elemnavbar/diconodinoi.html?state="+state);
+  }
+});
+
+
+
+
 router.post('/ban_or_PardonUser',async (req, res) => {
   try{
     if(req.session.admin){
@@ -69,9 +103,6 @@ router.post('/ban_or_PardonUser',async (req, res) => {
     return res.json({done});
   }
 });
-
-
-
 
 
 router.post('/addUser',async (req, res) => {
@@ -435,8 +466,11 @@ router.post('/reset-password',async (req, res) => {
     else {      
     // genero l'hash partendo dalla password
     const hs = await createHash(pw);
-    console.log(req.body.email);
-    await updatePw(hs,req.body.email);
+    var fromAdmin=false;
+    if(req.body.fromAdmin=='true'){
+      fromAdmin=true;
+    }
+    await updatePw(hs,req.body.email,fromAdmin);
     console.log("Password aggiornata");
     req.session.temporaryMessage="updatedPw";
     return res.redirect('/Login/Login.html');
@@ -480,6 +514,7 @@ async function changePassReq(email){
       throw Error("Email non presente");
     }
     var hs=result.rows[0].password;
+    mailOptions2.subject='Richiesta di cambio password';
     mailOptions2.to=email;
     mailOptions2.text=mailOptions2Text+email+"&key="+hs+"AperitivoRomano";
     transporter.sendMail(mailOptions2, function(error, info){
@@ -602,6 +637,7 @@ async function inserisciRegistrazione(nome, email, hs, Adminrequest){
 
     await client.query(query, values);
     console.log('Registrazione inserita con successo!');
+    mailOptions.subject='Benvenuto nel nostro sito!';
     mailOptions.to=email;
     if(Adminrequest){
       mailOptions.text=mailOptionsText3+email+"&key="+hs+"AdminRequest";;
@@ -992,7 +1028,7 @@ async function ban_pardonUser(email,hasGoogle){
   }
 }
 
-async function updatePw(pw,email){
+async function updatePw(pw,email,fromAdmin){
   const client = new Client({
     user: 'postgres',
     host: 'localhost', 
@@ -1006,6 +1042,11 @@ async function updatePw(pw,email){
     const query = 'UPDATE registrazioni SET password=$1 WHERE email=$2';
     const values=[pw,email];
     await client.query(query,values);
+    if(fromAdmin){
+      const query = 'UPDATE registrazioni SET confirmed=true WHERE email=$1';
+      const values=[email];
+      await client.query(query,values);
+    }
   }
   catch (err) {
     throw err;
@@ -1013,3 +1054,60 @@ async function updatePw(pw,email){
     await client.end();
   }
 }
+
+ async function sendReviews(nome,cognome,email,numero,recensione){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'INSERT INTO recensioni(nome, cognome, email ,telefono ,recensione) VALUES ($1, $2, $3, $4, $5)';
+    const values=[nome,cognome,email,numero,recensione];
+    await client.query(query,values);
+    //Invio email di ricevuta recensione
+    mailOptions.subject="Recensione AperitivoRomano";
+    mailOptions.to=email;
+    mailOptions.text=mailOptionsText4;
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+     console.log(error);
+      } else {
+        console.log('Email sent');
+      }
+    });
+
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function getReviews(){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT nome as title,recensione as text FROM recensioni WHERE approved=true';
+    var result= await client.query(query);
+    const array=result.rows;
+    return array;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }

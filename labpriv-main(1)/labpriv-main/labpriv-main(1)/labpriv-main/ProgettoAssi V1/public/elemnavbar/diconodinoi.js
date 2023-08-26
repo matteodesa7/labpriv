@@ -13,7 +13,9 @@ function change(){
 //Quando viene caricata la pagina vengono settate per la prima volta le 3 carte e poi fa un controllo veloce se è stato inviato un form con le informazioni
 document.addEventListener("DOMContentLoaded", function(event) {
     changeReviews();
-    var Sent=localStorage.getItem('Sent');
+    getApprovedReviews();
+    const urlParams = new URLSearchParams(window.location.search);
+    const Sent = urlParams.get('state');
     switch(Sent){
         case 'true':
             swal({
@@ -22,7 +24,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 icon: 'success',
                 ButtonText: 'OK'
               });
-            localStorage.removeItem('Sent');
             break;
         case 'false':
             swal({
@@ -31,7 +32,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 icon: 'Error',
                 ButtonText: 'OK'
               });
-            localStorage.removeItem('Sent');
             break;
         case 'primary':
             swal({
@@ -40,7 +40,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
                 icon: 'warning',
                 ButtonText: 'OK'
               });
-            localStorage.removeItem('Sent');
             break;
     }
   });
@@ -116,4 +115,21 @@ function changeReviews() {
 }
 // Esegue la funzione changeReviews ogni 20 secondi
 interval = setInterval(changeReviews, 20000);
+
+function getApprovedReviews(){
+  fetch('/getApprovedReviews', {
+    method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+  })
+  .then(response => response.json())
+  .then(async data => {
+    var approvedRev=data.approvedReviews;
+    approvedRev.forEach(element => {
+      reviews.unshift(element);
+    });
+    console.log(reviews);
+  })
+  .catch(error => {
+    console.error('Errore:', error);
+  });
+}
 
