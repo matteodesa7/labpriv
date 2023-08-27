@@ -3,24 +3,23 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Dicono di noi</title>
+	<title>Tendenza</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/elemnavbar/stile.css">
-    <link rel="icon" type="image/x-icon" href="./request.png" >
+    <link rel="stylesheet" type="text/css" href="./stile.css">
+    <link rel="icon" type="image/x-icon" href="./trend.png" >
     <script src="https://kit.fontawesome.com/a316d55189.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-
 
 </head>
 <body>
 	<nav class="navbar navbar-light" style="background-color: #fc9b00;">
         <a class="navbar-brand" href="/index.html">
-            <img src="./review.png">
+            <img src="./trend.png">
         </a>
         <a class="navbar-brand mr-auto" href="/index.html">
-            <h3>Dicono di noi</h3>
+            <h3>Tendenza</h3>
         </a>
-        
+
         <ul class="nav-item dropdown ml-auto" style = "margin-bottom: 0px;">
             <button class="btn btn-secondary dropdown-toggle mr-auto" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 
@@ -47,7 +46,7 @@
             </li>
         </ul>
 
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" id="togglerButton" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -77,84 +76,78 @@
                         <a class="dropdown-item" href="/Municipi/Municipio XIV/Municipio XIV.html">XIV Municipio</a>
                         <a class="dropdown-item" href="/Municipi/Municipio XV/Municipio XV.html">XV Municipio</a>
     
-                                <!--<div class="dropdown-divider"></div>-->
-                                <!--<a class="dropdown-item" href="#">Something else here</a>-->
                     </div>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="./diconodinoi.html">Dicono di noi <span class="sr-only">(current)</span></a></a>
+                <li class="nav-item">
+                    <a class="nav-link" href="./diconodinoi.html">Dicono di noi</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="./contattaci.html">Contattaci</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/Tendenza/tendenza.html">Tendenza</a>
+                <li class="nav-item active">
+                    <a class="nav-link" href="./tendenza.html">Tendenza<span class="sr-only">(current)</span></a></a>
                 </li>
-
             </ul>
         </div>
     </nav>
-    <div class="grid-container">
-        <div class="card" id = "review1" style="width: 25rem;">
-            <div class="card-body">
-            <h5 class="card-title"></h5>
-            <p class="card-text"></p>
-            </div>
-        </div>
-        <div class="card" id = "review2" style="width: 25rem;">
-            <div class="card-body">
-            <h5 class="card-title"></h5>
-            <p class="card-text"></p>
-            </div>
-        </div>
-        <div class="card" id = "review3" style="width: 25rem;">
-            <div class="card-body">
-            <h5 class="card-title"></h5>
-            <p class="card-text"></p>
-            </div>
-        </div>
-        
-        <div class="item">Item 4</div>
-        <button id = "btnrev">
-            Lascia una recensione!
-        </button>
-        <div class="item">Item 6</div>
-    </div>
+	
+    <header class="text-center py-4">
+        <h1>Luoghi in tendenza questa settimana</h1>
+    </header>
 
-    <form class="form" method="post" action="/inserisciRecensioni">
-        <div class="flex">
-            <label>
-                <input required="" placeholder="" type="text" class="input" name="nome">
-                <span>first name</span>
-            </label>
-    
-            <label>
-                <input required="" placeholder="" type="text" class="input" name="cognome">
-                <span>last name</span>
-            </label>
-        </div>  
-                
-        <label>
-            <input required="" placeholder="" type="email" class="input" name="email">
-            <span>email</span>
-        </label> 
+    <main class="container my-5">
+        <section class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Nome Luogo 1</h5>
+                        <p class="card-text">Descrizione breve del Luogo 1</p>
+                        <a href="luogo1.html" class="btn btn-primary">Scopri di più</a>
+                    </div>
+                </div>
+            </div>
             
-        <label>
-            <input required="" type="tel" placeholder="" class="input" name="numero">
-            <span>contact number</span>
-        </label>
-        <label>
-            <textarea required="" rows="3" placeholder="" class="input01" name="recensione"></textarea>
-            <span>message</span>
-        </label>
-        
-        <button class="fancy" input type="submit">
-          <span class="top-key"></span>
-          <span class="text">submit</span>
-          <span class="bottom-key-1"></span>
-          <span class="bottom-key-2"></span>
-        </button>
-    </form>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Nome Luogo 2</h5>
+                        <p class="card-text">Descrizione breve del Luogo 2</p>
+                        <a href="luogo2.html" class="btn btn-primary">Scopri di più</a>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Nome Luogo 3</h5>
+                        <p class="card-text">Descrizione breve del Luogo 3</p>
+                        <a href="luogo3.html" class="btn btn-primary">Scopri di più</a>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Nome Luogo 4</h5>
+                        <p class="card-text">Descrizione breve del Luogo 4</p>
+                        <a href="luogo4.html" class="btn btn-primary">Scopri di più</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Nome Luogo 5</h5>
+                        <p class="card-text">Descrizione breve del Luogo 5</p>
+                        <a href="luogo5.html" class="btn btn-primary">Scopri di più</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>    
     
     <footer>
         <div class="row justify-content-center">
@@ -167,12 +160,10 @@
             <a href="http://github.com/lauraaconcari/ProgettoLTW.git" target="_blank"><i class="fa-brands fa-github fa-lg"></i></a>
         </div>
     </footer>
-	
+
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script src="/localstorage.js"></script>
-    <script src="diconodinoi.js"></script>
-
 </body>
 </html>
