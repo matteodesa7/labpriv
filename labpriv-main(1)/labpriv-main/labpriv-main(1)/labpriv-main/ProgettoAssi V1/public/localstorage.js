@@ -299,7 +299,7 @@ function setAdminmode(){
   var dropdownItems = document.querySelectorAll(".dropdown-item");
   var GestioneUtenti=dropdownItems[0];
   GestioneUtenti.textContent="Gestisci utenti";
-  GestioneUtenti.setAttribute('href', './GestioneUtenti.html');
+  GestioneUtenti.setAttribute('href', 'http://localhost:8000/GestioneUtenti.html');
 
   var logoutItem = dropdownItems[1];
   var dropdownMenu = document.querySelector(".dropdown-menu")
@@ -335,7 +335,7 @@ function setAdminmode(){
 
   var Recensioni = document.createElement("a");
   Recensioni.className = "dropdown-item";
-  Recensioni.href = "#"; // Imposta l'attributo href come desiderato
+  Recensioni.setAttribute('href', 'http://localhost:8000/GestioneRecensioni.html') // Imposta l'attributo href come desiderato
   Recensioni.textContent = "Gestisci Recensioni"; // Testo del nuovo elemento
   dropdownMenu.insertBefore(Recensioni, logoutItem);
 

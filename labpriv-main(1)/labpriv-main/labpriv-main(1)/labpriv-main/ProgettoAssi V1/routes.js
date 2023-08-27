@@ -52,6 +52,63 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/approveReview',async (req, res) => {
+  try{
+      if(req.session.admin){
+        await approveReview(req.body.nome,req.body.cognome);
+        var done=true;
+        return res.json({done});
+      }
+      var done=false;
+      return res.json({done});
+  }
+  catch(error){
+    console.log(error.stack);
+    var done=false;
+    return res.json({done});
+  }
+});
+
+router.post('/deleteReview',async (req, res) => {
+  try{
+      if(req.session.admin){
+        if(req.body.approved){
+          var done= true;
+          return res.json({done});
+        }
+        await deleteReview(req.body.nome,req.body.cognome);
+        var done=true;
+        return res.json({done});
+      }
+      var done=false;
+      return res.json({done});
+  }
+  catch(error){
+    console.log(error.stack);
+    var done=false;
+    return res.json({done});
+  }
+});
+
+router.post('/getnpReviews',async (req, res) => {
+  try{
+      var reviews=[];
+      if(req.session.admin){
+        reviews=await getnpReviews();
+        console.log(reviews);
+        var done=true;
+        return res.json({done,reviews});
+      }
+      var done=false;
+      return res.json({done,reviews});
+  }
+  catch(error){
+    console.log(error.stack);
+    var done=false;
+    return res.json({done,reviews});
+  }
+});
+
 router.post('/getApprovedReviews',async (req, res) => {
   try{
       var approvedReviews=[];
@@ -1104,6 +1161,73 @@ async function updatePw(pw,email,fromAdmin){
     var result= await client.query(query);
     const array=result.rows;
     return array;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function getnpReviews(){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT nome as title,recensione as text,cognome FROM recensioni WHERE approved=false';
+    var result= await client.query(query);
+    const array=result.rows;
+    return array;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function deleteReview(nome,cognome){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'DELETE FROM recensioni WHERE nome=$1 AND cognome=$2';
+    const values=[nome,cognome];
+    await client.query(query,values);
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function approveReview(nome,cognome){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'UPDATE recensioni SET approved=true WHERE nome=$1 AND cognome=$2';
+    const values=[nome,cognome];
+    await client.query(query,values);
   }
   catch (err) {
     throw err;
