@@ -52,6 +52,60 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/deletesug',async (req, res) => {
+  try{
+      if(req.session.admin){
+        await deleteSugestion(req.body.nome,req.body.zona,req.body.email);
+        mailOptions.subject='Consiglio locale';
+        const purifiedEmail=req.body.email.replace("Google",'');
+        mailOptions.to=purifiedEmail;
+        var send;
+        if(req.body.action=='delete'){
+          send="Ci dispiace ma il locale che ha consigliato non è stato approvato.";
+        }
+        else{
+          send="Le comunichiamo che il luogo da lei suggerito è stato approvato e verrà presto inserito sul nostro sito."
+        }
+        mailOptions.text=send;
+        
+        transporter.sendMail(mailOptions, function(error, info){
+          if (error) {
+         console.log(error);
+          } else {
+            console.log('Email sent');
+          }
+        });
+        var done=true;
+        return res.json({done});
+      }
+      var done=false;
+      return res.json({done});
+  }
+  catch(error){
+    console.log(error.stack);
+    var done=false;
+    return res.json({done});
+  }
+});
+
+router.post('/getSugestions',async (req, res) => {
+  var sug=[];
+  try{
+      if(req.session.admin){
+        sug= await getSugestions();
+        var done=true;
+        return res.json({done,sug});
+      }
+      var done=false;
+      return res.json({done,sug});
+  }
+  catch(error){
+    console.log(error.stack);
+    var done=false;
+    return res.json({done,sug});
+  }
+});
+
 router.post('/approveReview',async (req, res) => {
   try{
       if(req.session.admin){
@@ -72,10 +126,6 @@ router.post('/approveReview',async (req, res) => {
 router.post('/deleteReview',async (req, res) => {
   try{
       if(req.session.admin){
-        if(req.body.approved){
-          var done= true;
-          return res.json({done});
-        }
         await deleteReview(req.body.nome,req.body.cognome);
         var done=true;
         return res.json({done});
@@ -1227,6 +1277,51 @@ async function updatePw(pw,email,fromAdmin){
     await client.connect();
     const query = 'UPDATE recensioni SET approved=true WHERE nome=$1 AND cognome=$2';
     const values=[nome,cognome];
+    await client.query(query,values);
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function getSugestions(){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT * FROM Consigliati ';
+    var result= await client.query(query);
+    const array=result.rows;
+    return array;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function deleteSugestion(nome,zona,email){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'DELETE FROM consigliati WHERE nome=$1 AND zona=$2 AND email=$3';
+    const values=[nome,zona,email];
     await client.query(query,values);
   }
   catch (err) {

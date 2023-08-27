@@ -327,12 +327,6 @@ function setAdminmode(){
 
   dropdownMenu.insertBefore(blockGoogle, logoutItem);
 
-  var newDropdownItem = document.createElement("a");
-  newDropdownItem.className = "dropdown-item";
-  newDropdownItem.href = "#"; // Imposta l'attributo href come desiderato
-  newDropdownItem.textContent = "Modifica username"; // Testo del nuovo elemento
-  dropdownMenu.insertBefore(newDropdownItem, logoutItem);
-
   var Recensioni = document.createElement("a");
   Recensioni.className = "dropdown-item";
   Recensioni.setAttribute('href', 'http://localhost:8000/GestioneRecensioni.html') // Imposta l'attributo href come desiderato
@@ -341,7 +335,7 @@ function setAdminmode(){
 
   var Consigliati = document.createElement("a");
   Consigliati.className = "dropdown-item";
-  Consigliati.href = "#"; // Imposta l'attributo href come desiderato
+  Consigliati.href = "http://localhost:8000/GestioneConsigliati.html"; // Imposta l'attributo href come desiderato
   Consigliati.textContent = "Gestisci Consigliati"; // Testo del nuovo elemento
   dropdownMenu.insertBefore(Consigliati, logoutItem);
 

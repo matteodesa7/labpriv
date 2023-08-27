@@ -705,12 +705,17 @@ var Filtri = [];
 for (var i = 0; i <data.length; i++) {
   var nuovoFiltro = {
     "Offerte speciali": Math.random() < 0.5,
-    "Ordina per prezzo crescente":  Math.floor(Math.random() * 5) + 1,
     "Tipologia (vegano, vegetariano, senza glutine)": Math.random() < 0.5,
     "Apericena": Math.random() < 0.5,
     "Visione eventi sportivi": Math.random() < 0.5,
     "DJ set": Math.random() < 0.5,
     "Vista panoramica": Math.random() < 0.5,
+    "Prenotabile con The Fork":Math.random() < 0.5,
+    "Pagina Instagram presente":Math.random() < 0.5,
+    "Aperti ora":Math.random() < 0.5,
+    "Accessibile in sedia a rotelle":Math.random() < 0.5,
+    "Ammette animali":Math.random() < 0.5,
+    "All you can eat":Math.random() < 0.5,
   };
 
   Filtri.push(nuovoFiltro);
@@ -810,6 +815,7 @@ filtroMenuButton.addEventListener('click', function(event) {
 checkboxes.forEach(checkbox => {
     checkbox.addEventListener('click', function(event) {
         // Impedisci la propagazione dell'evento al pulsante del menu
+        getSelectedCheckboxes();
         event.stopPropagation();
 
         // Esegui l'aggiornamento del testo del pulsante

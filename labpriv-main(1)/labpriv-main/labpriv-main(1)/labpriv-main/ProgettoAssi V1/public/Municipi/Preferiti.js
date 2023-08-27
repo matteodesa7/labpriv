@@ -376,15 +376,10 @@ function filterItems(filtri) {
 
     for (var i = 0; i < filtri.length; i++) {
       var checkbox = filtri[i];
-    
-      console.log("filtro:", checkbox);
-    
-      if (!checkbox.includes("Ordina")) {
-        var display = Filtri[count][checkbox];
-        if (!display) {
+      var display = Filtri[count][checkbox];
+      if (!display) {
           item.style.display = "none";
           break; // Esci dal ciclo for
-        }
       }
     }
     count++;
@@ -421,31 +416,19 @@ function unflexList(){
   }
 }
 
-// Seleziona il contenitore del dropdown
-var dropdownMenu = document.getElementById("menucheck");
 
-// Aggiungi un evento che intercetta i clic sui checkbox
-dropdownMenu.addEventListener("click", function(event) {
-  if (event.target.type === "checkbox") {
-    var checkbox = event.target;
-    var isChecked = checkbox.checked;
-    var value = checkbox.value;
-
-    console.log("Checkbox " + value + " è stato selezionato: " + isChecked);
-    // Esempio di utilizzo della funzione getSelectedCheckboxes
-    var selectedCheckboxes = getSelectedCheckboxes();
-    filterItems(selectedCheckboxes);
-  }
-});
 
 // Funzione per ottenere i checkbox selezionati in un determinato momento
+
 function getSelectedCheckboxes() {
-  var checkboxes = document.querySelectorAll('input[name="filtro"]:checked');
   var selectedValues = [];
 
   checkboxes.forEach(function(checkbox) {
-    selectedValues.push(checkbox.value);
+    if(checkbox.checked){
+      selectedValues.push(checkbox.value);
+    }
   });
-
-  return selectedValues;
+  console.log(selectedValues);
+  filterItems(selectedValues);
+  return;
 }
