@@ -198,8 +198,14 @@ function checkRegistered(){
     }
 }
 //Funzione chiamata se esiste un login non andato a buon fine, mostra una serie di popup e ricarica la pagina in cui si trova l'utente
-function checkBadLogIn(){
-  var badLogin= localStorage.getItem('badLogin');
+ function checkBadLogIn(Test){
+  var badLogin;
+  if(Test){
+    badLogin=Test;
+  }
+  else{
+    badLogin= localStorage.getItem('badLogin');
+  }
   console.log("Stato di badLogin: "+badLogin);
   switch(badLogin){
     case 'pass':
@@ -220,6 +226,7 @@ function checkBadLogIn(){
         ButtonText: 'OK',
         }).then(() => {
           removeL();
+          return 'emailerror';
         });
      break;
     case 'notConfirmed':
@@ -313,3 +320,4 @@ function checkGoogle(){
     console.error('Errore:', error);
   });
 }
+module.exports={checkBadLogIn};
