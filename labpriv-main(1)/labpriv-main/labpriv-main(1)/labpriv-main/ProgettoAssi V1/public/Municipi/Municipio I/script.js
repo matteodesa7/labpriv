@@ -888,33 +888,5 @@ cambiaPulsante.addEventListener('click', function() {
     isEtichettaA = !isEtichettaA;
 });
  
-// Seleziona il list-container
-const listContainer = document.getElementById('lista-luoghi');
-
-// Aggiungi un gestore di eventi al list-container per ascoltare gli eventi dei figli dinamici
-listContainer.addEventListener('change', function(event) {
-    const clickedCheckbox = event.target;
-
-    // Verifica se l'elemento cliccato è una casella di controllo
-    if (clickedCheckbox.tagName === 'INPUT' && clickedCheckbox.type === 'checkbox') {
-        const listItem = clickedCheckbox.closest('li');
-
-        if (clickedCheckbox.checked) {
-            // Crea l'elemento per il simbolo "like"
-            const likeSymbol = document.createElement('span');
-            likeSymbol.textContent = '❤️'; // Simbolo cuore
-            likeSymbol.classList.add('like-symbol');
-
-            // Aggiungi il simbolo "like" all'elemento della lista
-            listItem.appendChild(likeSymbol);
-        } else {
-            // Rimuovi il simbolo "like" se la casella di controllo è deselezionata
-            const likeSymbol = listItem.querySelector('.like-symbol');
-            if (likeSymbol) {
-                likeSymbol.remove();
-            }
-        }
-    }
-});
 
 

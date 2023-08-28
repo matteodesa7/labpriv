@@ -339,6 +339,17 @@ for (var i = 1; i <= numLuoghi; i++) {
       div.appendChild(phoneLink);
     }
 
+    var like = document.createElement("a");
+    like.href = i;
+    like.id = "like";
+    
+    var icon = document.createElement("i");
+    icon.classList.add("fa-regular", "fa-heart","fa-lg");
+
+    
+    like.appendChild(icon);
+    div.appendChild(like);
+
 
   }
   
@@ -360,6 +371,27 @@ for (var i = 1; i <= numLuoghi; i++) {
       var desc = this.querySelector("div p");
       // Aggiungi la classe "show" all'elemento <p>
       desc.classList.toggle("show");
+    });
+    like.addEventListener("click", function(event) {
+      event.preventDefault();
+      var likeLink = this.getAttribute("href");
+      console.log("Link del like:", likeLink);
+
+
+      var icon = this.querySelector("i.fa-solid.fa-heart"); // Trova l'icona cuore pieno all'interno dell'elemento "like"
+      
+      if (icon) {
+        // Cambia l'icona cuore pieno a cuore vuoto
+        icon.classList.remove("fa-solid");
+        icon.classList.add("fa-regular");
+      } else {
+        // Trova l'icona cuore vuoto all'interno dell'elemento "like"
+        icon = this.querySelector("i.fa-regular.fa-heart");
+        
+        // Cambia l'icona cuore vuoto a cuore pieno
+        icon.classList.remove("fa-regular");
+        icon.classList.add("fa-solid");
+      }
     });
   })(name);
 }

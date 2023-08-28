@@ -295,16 +295,17 @@ function sendToken(token){
   });
 }
 function setAdminmode(){
-
   var dropdownItems = document.querySelectorAll(".dropdown-item");
-  var GestioneUtenti=dropdownItems[0];
-  GestioneUtenti.textContent="Gestisci utenti";
-  GestioneUtenti.setAttribute('href', 'http://localhost:8000/GestioneUtenti.html');
-
   var logoutItem = dropdownItems[1];
   var dropdownMenu = document.querySelector(".dropdown-menu")
   var dropdownButton = document.getElementById("dropdownMenuButton");
   dropdownButton.textContent="Amministratore";
+
+  var GestioneUtenti = document.createElement("a");
+  GestioneUtenti.className = "dropdown-item";
+  GestioneUtenti.setAttribute('href', 'http://localhost:8000/GestioneUtenti.html') // Imposta l'attributo href come desiderato
+  GestioneUtenti.textContent = "Gestisci Utenti"; // Testo del nuovo elemento
+  dropdownMenu.insertBefore(GestioneUtenti, logoutItem);
 
   var blockGoogle = document.createElement("a");
   blockGoogle.className = "dropdown-item";
