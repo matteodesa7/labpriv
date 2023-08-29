@@ -14,8 +14,10 @@ document.getElementById("btnConfermaEmail").addEventListener("click", function (
     })
     .then(response => response.json())
     .then(async data => {
-      localStorage.setItem("Registered", true);
-      window.location.href = "/Login/Login.html"; // Usa "=" invece di "/"
+      if(data.done){
+        localStorage.setItem("Registered", true);
+        window.location.href = "/Login/Login.html"; // Usa "=" invece di "/"  
+      }
     })
     .catch(error => {
       console.error('Errore:', error);

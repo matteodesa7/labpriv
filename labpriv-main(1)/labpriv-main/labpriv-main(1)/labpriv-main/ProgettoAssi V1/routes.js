@@ -377,7 +377,6 @@ router.post('/redirect', async (req, res) => {
     try {
       // genero l'hash partendo dalla password
       const hs = await createHash(pw);
-      console.log('Hash: %s', hs);
 
       // verifico se la password coincide con l'hash
       //const valid = await verifyHash(pw, hs)
@@ -389,9 +388,11 @@ router.post('/redirect', async (req, res) => {
       // Imposta una variabile di sessione temporanea
       req.session.temporaryMessage = "tobeConfirmed"; // Cambia il messaggio come preferisci
 
-      // Effettua la redirect a /Login/Login.html
-      return res.redirect('/Login/Login.html');
-    } catch (err) {
+
+      // Restituisci un JSON come risposta (facoltativo)
+      return res.redirect(307, "/registersuccess");
+    } 
+    catch (err) {
       var errore= err.stack;
       if(errore.includes('registrazioni_pkey')){
         req.session.temporaryMessage = "primary";
@@ -404,9 +405,14 @@ router.post('/redirect', async (req, res) => {
     }
   }
 });
+router.post('/registersuccess', (req, res) => {
+  // Effettua la redirect a /index.html
+  res.redirect('/Login/Login.html');
+});
+
 router.get('/redirect', (req, res) => {
   // Effettua la redirect a /index.html
-  res.redirect('/index.html');
+  res.redirect('/Login/Login.html');
 });
 
 router.get('/auth/google/redirect',passport.authenticate('google'),async (req, res) => {
@@ -429,9 +435,6 @@ catch(err){
   }
   return res.redirect('/Login/Login.html');
 }
-
-
-
 });
 
 router.get('/google',passport.authenticate('google',{
@@ -451,7 +454,7 @@ router.post('/access', async (req, res) => {
     req.session.loggedIn=true;
     req.session.firstTime=true;
     await inserisciPreferiti(req.body.email,req);
-    return res.redirect('/index.html');
+    return res.redirect(307, "/loginsuccess");
   }
   catch(err){
     var errore= err.stack;
@@ -471,11 +474,13 @@ router.post('/access', async (req, res) => {
     console.log(req.session.temporaryMessage);
     return res.redirect('/Login/Login.html');
   }
-
-
-
-
 });
+
+router.post('/loginsuccess', (req, res) => {
+  // Effettua la redirect a /index.html
+  res.redirect('/index.html');
+});
+
 router.get('/access', (req, res) => {
     // Effettua la redirect a /index.html
     res.redirect('/index.html');
@@ -515,6 +520,7 @@ router.get('/get-data', (req, res) => {
 
 
 router.post('/exit',async (req, res) => {
+  console.log("Stampa dell'exit:");
   console.log(req.body)
   try{
     await loadDb(JSON.parse(req.body.list),req.body.email,JSON.parse(req.body.list2));
@@ -535,7 +541,8 @@ router.post('/confirmemail',async (req, res) => {
     return res.json({done});
   }
   catch(error){
-    throw(error);
+    var done=false;
+    return res.json({done});
   }
 });
 
@@ -700,7 +707,7 @@ async function confirmEmail(email){
     await client.connect();
     const query = 'UPDATE registrazioni SET confirmed=true WHERE email=$1';
     const values = [email];
-    const result= await client.query(query,values);
+    await client.query(query,values);
   }
   catch (err) {
     throw err;
@@ -753,11 +760,9 @@ async function inserisciRegistrazione(nome, email, hs, Adminrequest){
       mailOptions.text=mailOptionsText+email+"&key="+hs+"AperitivoRomano";;
     }
 
-    transporter.sendMail(mailOptions, function(error, info){
+      transporter.sendMail(mailOptions, function(error, info){
       if (error) {
-     console.log(error);
-      } else {
-        console.log('Email sent');
+        throw error;
       }
     });
   } catch (err) {
