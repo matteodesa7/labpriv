@@ -464,3 +464,21 @@ function getSelectedCheckboxes() {
   filterItems(selectedValues);
   return;
 }
+
+const filterInput = document.querySelector("#filter");
+
+filterInput.addEventListener("keyup", filterItems);
+
+function filterItems() {
+  const filterValue = filterInput.value.toLowerCase();
+
+  listItems.forEach(item => {
+    const itemName = item.getAttribute("data-name").toLowerCase();
+
+    if (itemName.includes(filterValue)) {
+      item.style.display = "flex";
+    } else {
+      item.style.display = "none";
+    }
+  });
+}
