@@ -52,6 +52,46 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/deleteuser',async (req, res) => {
+  var done;
+  try{
+      await deleteUser(req.body.email);
+      done=true;
+      return res.json({done});
+  }
+  catch(error){
+    done=false;
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
+
+
+router.post('/changeusername',async (req, res) => {
+  var done=false;
+  try{
+        done= await changeUser(req.body.email,req.body.user);
+        return res.json({done});
+  }
+  catch(error){
+    console.log(error.stack);
+    return res.json({done});
+  }
+});
+
+router.post('/getLikesI',async (req, res) => {
+  var likes=[];
+  try{
+        likes= await getLikes();
+        return res.json({likes});
+  }
+  catch(error){
+    console.log(error.stack);
+    return res.json({likes});
+  }
+});
+
 router.post('/getTendencies',async (req, res) => {
   var tendencies=[];
   try{
@@ -1368,6 +1408,52 @@ async function updatePw(pw,email,fromAdmin){
     var result= await client.query(query);
     const array=result.rows;
     return array;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function getLikes(){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT * FROM public.like';
+    var result= await client.query(query);
+    const array=result.rows;
+    return array;
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function changeUser(email,user){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'UPDATE registrazioni SET nome=$2 WHERE email=$1';
+    const values=[email,user];
+    var result= await client.query(query,values);
+    return true;
   }
   catch (err) {
     throw err;

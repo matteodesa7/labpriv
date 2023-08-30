@@ -1,3 +1,9 @@
+
+
+
+
+
+
 //Icona dei preferiti da settare nel momento in cui l'user aggiunge un posto ai preferiti
 var favIcon = L.icon({
   iconUrl:'../../preferiti.png' ,
@@ -248,6 +254,9 @@ var numLuoghi = data.length;
 var listaLuoghi = document.getElementById("lista-luoghi");
 
 // generiamo i tag HTML per i luoghi
+
+
+var likecounts=[];
 for (var i = 1; i <= numLuoghi; i++) {
   //Prendiamo l'id e il nome del posto
   var id=Municipio+i.toString();
@@ -342,6 +351,15 @@ for (var i = 1; i <= numLuoghi; i++) {
     var like = document.createElement("a");
     like.href = i;
     like.id = "like";
+    var likeCount = document.createElement("span");
+    likeCount.id = "like-count";
+
+    const stringlist= localStorage.getItem('likes');
+    var likes=JSON.parse(stringlist);
+    likeCount.textContent =likes[i-1].valore;  // Imposta il numero iniziale dei "mi piace"
+    likecounts.push(likeCount);
+    // Aggiungi l'elemento con il numero vicino all'elemento <a>
+    like.appendChild(likeCount);
     
     var icon = document.createElement("i");
     icon.classList.add("fa-regular", "fa-heart","fa-lg");
@@ -372,27 +390,31 @@ for (var i = 1; i <= numLuoghi; i++) {
       // Aggiungi la classe "show" all'elemento <p>
       desc.classList.toggle("show");
     });
-    like.addEventListener("click", function(event) {
-      event.preventDefault();
-      var likeLink = this.getAttribute("href");
-      console.log("Link del like:", likeLink);
-
-
-      var icon = this.querySelector("i.fa-solid.fa-heart"); // Trova l'icona cuore pieno all'interno dell'elemento "like"
-      
-      if (icon) {
-        // Cambia l'icona cuore pieno a cuore vuoto
-        icon.classList.remove("fa-solid");
-        icon.classList.add("fa-regular");
-      } else {
-        // Trova l'icona cuore vuoto all'interno dell'elemento "like"
-        icon = this.querySelector("i.fa-regular.fa-heart");
+    if(like){
+      like.addEventListener("click", function(event) {
+        event.preventDefault();
+        var likeLink = this.getAttribute("href");
+        console.log("Link del like:", likeLink);
+  
+  
+        var icon = this.querySelector("i.fa-solid.fa-heart"); // Trova l'icona cuore pieno all'interno dell'elemento "like"
         
-        // Cambia l'icona cuore vuoto a cuore pieno
-        icon.classList.remove("fa-regular");
-        icon.classList.add("fa-solid");
-      }
-    });
+        if (icon) {
+          // Cambia l'icona cuore pieno a cuore vuoto
+          icon.classList.remove("fa-solid");
+          icon.classList.add("fa-regular");
+          likecounts[likeLink-1].textContent=(parseInt(likecounts[likeLink-1].textContent))-1;
+        } else {
+          // Trova l'icona cuore vuoto all'interno dell'elemento "like"
+          icon = this.querySelector("i.fa-regular.fa-heart");
+          
+          // Cambia l'icona cuore vuoto a cuore pieno
+          icon.classList.remove("fa-regular");
+          icon.classList.add("fa-solid");
+          likecounts[likeLink-1].textContent=(parseInt(likecounts[likeLink-1].textContent))+1;
+        }
+      });
+    }
   })(name);
 }
 
@@ -423,7 +445,7 @@ function filterItems(filtri) {
 const pagina_di_riferimento = document.referrer.replace(/^.*?\/\/[^\/]+(\/.*)$/, "$1");
 if(pagina_di_riferimento){
   console.log(pagina_di_riferimento);
-  if(pagina_di_riferimento=="/Favourite/favourite.html"){
+  if(pagina_di_riferimento=="/Favourite/favourite.html"||pagina_di_riferimento=="/Tendenza/tendenza.html"){
     var favID= localStorage.getItem('clickedID');
     if(favID!==null){
     localStorage.removeItem('clickedID');
@@ -467,9 +489,9 @@ function getSelectedCheckboxes() {
 
 const filterInput = document.querySelector("#filter");
 
-filterInput.addEventListener("keyup", filterItems);
+filterInput.addEventListener("keyup", filterItems2);
 
-function filterItems() {
+function filterItems2() {
   const filterValue = filterInput.value.toLowerCase();
 
   listItems.forEach(item => {

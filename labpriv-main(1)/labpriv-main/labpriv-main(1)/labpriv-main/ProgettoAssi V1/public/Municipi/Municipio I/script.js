@@ -700,6 +700,7 @@ var dataInsta = [
     "popupContent": "Fico by Baguetteria"
   }
 ];
+
 var Filtri = [];
 
 for (var i = 0; i < data.length; i++) {
@@ -882,5 +883,20 @@ function setDark() {
   themeIcon.classList.add("change");
   themeIcon.src = moon;
 }
+document.addEventListener('DOMContentLoaded', function (){
+  var municipio = data[0].id.replace('1','');
+  fetch('/getLikes'+municipio,{
+      method: 'POST'
+  })
+  .then(response => response.json())
+  .then(data => {
+    likes=data.likes;
+    localStorage.setItem('likes',JSON.stringify(likes));
+  })
+  .catch(error => {
+    console.error(error);
+  });
+});
+
 
 

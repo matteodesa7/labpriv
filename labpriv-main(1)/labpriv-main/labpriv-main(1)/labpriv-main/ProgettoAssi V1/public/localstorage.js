@@ -62,6 +62,25 @@ function checkLoggedIn() {
         var preferiti=dropdownItems[0];
         preferiti.style.display="none";
       }
+      var dropdownMenu = document.querySelector(".dropdown-menu")
+      var logoutItem = dropdownItems[1];
+      if(!(localStorage.getItem('email').includes("Google"))){
+        var ModificaUsername = document.createElement("a");
+        ModificaUsername.className = "dropdown-item";
+        ModificaUsername.setAttribute('href', '#') // Imposta l'attributo href come desiderato
+        ModificaUsername.textContent = "Modifica Username"; // Testo del nuovo elemento
+        ModificaUsername.addEventListener('click',changeuser);
+        dropdownMenu.insertBefore(ModificaUsername, logoutItem);
+      }
+     
+
+      var EliminaAccount = document.createElement("a");
+      EliminaAccount.className = "dropdown-item";
+      EliminaAccount.setAttribute('href', '#') // Imposta l'attributo href come desiderato
+      EliminaAccount.textContent = "Elimina Account"; // Testo del nuovo elemento
+      EliminaAccount.addEventListener("click", deleteUser);
+      dropdownMenu.insertBefore(EliminaAccount, logoutItem);
+
       //Controllo se è stato appena effettuato il login, in caso positivo mando un messaggio all'utente di benvenuto
       if(loggedIn=='firstTime'){
         swal({
@@ -148,7 +167,7 @@ function retrieveData(){
   socket.onmessage =async  (event) => {
     console.log(`Messaggio ricevuto dal server: ${event.data}`);
     if(event.data=="Chiusura server"){
-      await localStorage.clear();
+      localStorage.clear();
       window.location.href = "https://www.example.com/";
     }
   };
@@ -420,3 +439,72 @@ async function checkGoogle2() {
     return false;
   }
 }
+
+function changeuser(){
+  event.preventDefault();
+    swal("Inserire il nuovo username", {
+        content: "input",
+    })
+    .then((value) => {
+        if (value !== null) { // Controllo se l'input non è nullo
+            const params = new URLSearchParams();
+            params.append('user',value); // Aggiungi il nome del parametro (in questo caso, 'destinatario')   
+            params.append('email',localStorage.getItem('email'));
+            fetch('/changeusername', {
+                method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
+                },
+                body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
+              })
+              .then(response => response.json())
+              .then(async data => {
+                if(data.done){
+                  swal("Fatto!", "Username modificato con successo", "success");
+                  var dropdownButton = document.getElementById("dropdownMenuButton");
+                  dropdownButton.textContent=value;
+                  localStorage.setItem('nomeUtente',value);
+                }
+              })
+              .catch(error => {
+                console.error('Errore:', error);
+              });
+        } 
+        else {
+            swal("Azione annullata", "", "success");
+        }
+    });
+  
+}
+function deleteUser(){
+  event.preventDefault();
+    swal("Attenzione","Vuoi davvero eliminare l'account? Digita 'ok' per confermare","warning", {
+        content: "input",
+    })
+    .then((value) => {
+        if (value == 'ok') { // Controllo se l'input non è nullo
+            const params = new URLSearchParams();
+            params.append('email',localStorage.getItem('email'));
+            fetch('/deleteuser', {
+                method: 'POST', // Metodo HTTP che si desidera utilizzare (in questo caso, POST)
+                headers: {
+                  'Content-Type': 'application/x-www-form-urlencoded', // Cambiato il tipo di dati, nel caso di params utilizza application/x-www-form-urlencoded
+                },
+                body: params, // Converte l'oggetto URLSearchParams in una stringa per il corpo della richiesta
+              })
+              .then(response => response.json())
+              .then(async data => {
+                if(data.done){
+                  localStorage.clear();
+                  window.location.reload();
+                }
+              })
+              .catch(error => {
+                console.error('Errore:', error);
+              });
+        } 
+        else {
+            swal("Azione annullata", "Il tuo account non è stato eliminato", "success");
+        }
+    });
+  }

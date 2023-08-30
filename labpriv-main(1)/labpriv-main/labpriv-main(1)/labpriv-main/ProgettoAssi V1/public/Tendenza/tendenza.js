@@ -25,5 +25,15 @@ function setTendency(luoghi){
         cardTitle.textContent = luogo.nome;
         cardDescription.textContent = luogo.descrizione;
         cardLink.href = luogo.municipio;
+        cardLink.addEventListener('click',redirect);
     });
+}
+
+function redirect(event) {
+  event.preventDefault(); // impedisce il comportamento predefinito del link
+  const ID = this.href.replace(/^.*\//, ''); // ottiene l'id del link
+  const posID= parseInt(ID.replace(/\D/g, ''));
+  localStorage.setItem('clickedID',posID);
+  var m = ID.replace(/\d+/g, '');
+  window.location.href="/Municipi/Municipio "+m+"/Municipio "+m+".html";
 }
