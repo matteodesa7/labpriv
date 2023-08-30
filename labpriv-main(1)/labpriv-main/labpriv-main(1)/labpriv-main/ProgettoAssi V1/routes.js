@@ -52,6 +52,23 @@ router.use(session({
 
 
 // siamo in registrazione
+router.post('/getTendencies',async (req, res) => {
+  var tendencies=[];
+  try{
+        tendencies= await getTendencies();
+        return res.json({tendencies});
+  }
+  catch(error){
+    console.log(error.stack);
+    return res.json({tendencies});
+  }
+});
+
+
+
+
+
+
 router.post('/deletesug',async (req, res) => {
   try{
       if(req.session.admin){
@@ -1328,6 +1345,29 @@ async function updatePw(pw,email,fromAdmin){
     const query = 'DELETE FROM consigliati WHERE nome=$1 AND zona=$2 AND email=$3';
     const values=[nome,zona,email];
     await client.query(query,values);
+  }
+  catch (err) {
+    throw err;
+  } finally {
+    await client.end();
+  }
+ }
+
+ async function getTendencies(){
+  const client = new Client({
+    user: 'postgres',
+    host: 'localhost', 
+    database: 'Registrazioni',
+    password: 'lallacommit',
+    port: 5432, // La porta di default per PostgreSQL è 5432
+  });
+
+  try{
+    await client.connect();
+    const query = 'SELECT * FROM tendenza ';
+    var result= await client.query(query);
+    const array=result.rows;
+    return array;
   }
   catch (err) {
     throw err;
