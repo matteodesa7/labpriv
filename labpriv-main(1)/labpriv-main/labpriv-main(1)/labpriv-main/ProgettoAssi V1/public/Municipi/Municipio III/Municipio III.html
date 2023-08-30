@@ -103,8 +103,31 @@
             </div>
             <div class="right-column">
                 <div class="filter-container">
-                    <label for="filter">Filtra per nome:</label>
-                    <input type="text" id="filter" name="filter">
+                    <div class="filter-row">
+                        <!-- Toggler per il dropdown-menu -->
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="FiltroMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                SELEZIONA FILTRO
+                            </button>
+                            <div class="dropdown-menu" id="menucheck" aria-labelledby="FiltroMenu">
+                                <!-- Contenuto del dropdown-menu con checkbox -->
+                                <label><input type="checkbox" name="filtro" value="Offerte speciali">Offerte speciali</label>
+                                <label><input type="checkbox" name="filtro" value="Tipologia (vegano, vegetariano, senza glutine)">Tipologia (vegano, vegetariano, senza glutine)</label>
+                                <label><input type="checkbox" name="filtro" value="Apericena">Apericena</label>
+                                <label><input type="checkbox" name="filtro" value="Visione eventi sportivi">Visione eventi sportivi</label>
+                                <label><input type="checkbox" name="filtro" value="DJ set">DJ set</label>
+                                <label><input type="checkbox" name="filtro" value="Vista panoramica">Vista panoramica</label>
+                                <label><input type="checkbox" name="filtro" value="Prenotabile con The Fork">Prenotabile con The Fork</label>
+                                <label><input type="checkbox" name="filtro" value="Pagina Instagram presente">Pagina Instagram presente</label>
+                                <label><input type="checkbox" name="filtro" value="Aperti ora">Aperti ora</label>
+                                <label><input type="checkbox" name="filtro" value="Accessibile in sedia a rotelle">Accessibile in sedia a rotelle</label>
+                                <label><input type="checkbox" name="filtro" value="Ammette animali">Ammette animali</label>
+                                <label><input type="checkbox" name="filtro" value="All you can eat">All you can eat</label>
+                            </div>
+                        </div>
+                        <label for="filter">Filtra per nome:</label>
+                        <input type="text" id="filter" name="filter">
+                    </div>
                 </div>
                 <ul class="list-container" id="lista-luoghi">
                 

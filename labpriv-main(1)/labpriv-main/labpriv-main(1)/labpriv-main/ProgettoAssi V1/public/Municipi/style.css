@@ -56,6 +56,27 @@
   .filter-container {
     margin-bottom: 20px;
   }
+ 
+  .filter-row {
+    display: flex; /* Utilizza flexbox per allineare gli elementi in una riga */
+    align-items: center; /* Allinea verticalmente gli elementi */
+  }
+  .filter-row label {
+    margin-right: 10px; /* Spazio tra la label e l'input text */
+    margin-left: 20px;
+    margin-top: 20px; 
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+
+  .filter-row input {
+    margin-right: 10px; /* Spazio tra l'input text e il button */
+    font-size: 1rem;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 20px; 
+  }
 
   /*Bottone Seleziona Filtro*/
   #FiltroMenu {
@@ -80,16 +101,18 @@
     padding: 10px; /* Aggiunge spazio tra gli item */
     width: 200px; /* Imposta una larghezza fissa al contenitore */
     margin-left: 3px;
+    
     max-height: 250px; /* Imposta l'altezza massima del menu */
     overflow-y: auto; /* Aggiungi una scrollbar quando il contenuto supera l'altezza massima */
     background-color: rgb(255, 196, 157);
   }
 
-  label.filtro {
-    display: block;
-    margin-bottom: 5px;
-    cursor: pointer;
+  .dropdown-menu label {
+    margin-top: 0;
+    margin-left: 0;
+    margin-right: 0;
   }
+
 
   input[type="checkbox"] {
     margin-right: 10px; /* Aggiunge spazio tra il quadrato della checkbox e il testo dell'etichetta */

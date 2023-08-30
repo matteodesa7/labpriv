@@ -25,7 +25,7 @@
             <h3>Municipio I</h3>
         </a>
 		
-        <button class="circular-button" id="cambiaPulsante">A</button>
+        
 
         <ul class="nav-item dropdown ml-auto" style = "margin-bottom: 0px;">
             <button class="btn btn-secondary dropdown-toggle mr-auto" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -97,42 +97,47 @@
         </div>
     </nav>
 
-    <div class="theme-container shadow-dark">
-        <img id="theme-icon"    src="https://www.uplooder.net/img/image/2/addf703a24a12d030968858e0879b11e/moon.svg" alt="ERR">
-    </div>
+    
 	<div class="container">
         <div class="row">
             <div class="left-column">
                 <div id="map"></div>
             </div>
-            <div class="right-column">
+            <div class="right-column" id = "right-column">
                 <div class="filter-container">
-                    
-                    <!-- Toggler per il dropdown-menu -->
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="FiltroMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            SELEZIONA FILTRO
-                        </button>
-                        <div class="dropdown-menu" id="menucheck" aria-labelledby="FiltroMenu">
-                            <!-- Contenuto del dropdown-menu con checkbox -->
-                            <label><input type="checkbox" name="filtro" value="Offerte speciali">Offerte speciali</label>
-                            <label><input type="checkbox" name="filtro" value="Tipologia (vegano, vegetariano, senza glutine)">Tipologia (vegano, vegetariano, senza glutine)</label>
-                            <label><input type="checkbox" name="filtro" value="Apericena">Apericena</label>
-                            <label><input type="checkbox" name="filtro" value="Visione eventi sportivi">Visione eventi sportivi</label>
-                            <label><input type="checkbox" name="filtro" value="DJ set">DJ set</label>
-                            <label><input type="checkbox" name="filtro" value="Vista panoramica">Vista panoramica</label>
-                            <label><input type="checkbox" name="filtro" value="Prenotabile con The Fork">Prenotabile con The Fork</label>
-                            <label><input type="checkbox" name="filtro" value="Pagina Instagram presente">Pagina Instagram presente</label>
-                            <label><input type="checkbox" name="filtro" value="Aperti ora">Aperti ora</label>
-                            <label><input type="checkbox" name="filtro" value="Accessibile in sedia a rotelle">Accessibile in sedia a rotelle</label>
-                            <label><input type="checkbox" name="filtro" value="Ammette animali">Ammette animali</label>
-                            <label><input type="checkbox" name="filtro" value="All you can eat">All you can eat</label>
+                    <div class="filter-row">
+                        <!-- Toggler per il dropdown-menu -->
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" id="FiltroMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                SELEZIONA FILTRO
+                            </button>
+                            <div class="dropdown-menu" id="menucheck" aria-labelledby="FiltroMenu">
+                                <!-- Contenuto del dropdown-menu con checkbox -->
+                                <label><input type="checkbox" name="filtro" value="Offerte speciali">Offerte speciali</label>
+                                <label><input type="checkbox" name="filtro" value="Tipologia (vegano, vegetariano, senza glutine)">Tipologia (vegano, vegetariano, senza glutine)</label>
+                                <label><input type="checkbox" name="filtro" value="Apericena">Apericena</label>
+                                <label><input type="checkbox" name="filtro" value="Visione eventi sportivi">Visione eventi sportivi</label>
+                                <label><input type="checkbox" name="filtro" value="DJ set">DJ set</label>
+                                <label><input type="checkbox" name="filtro" value="Vista panoramica">Vista panoramica</label>
+                                <label><input type="checkbox" name="filtro" value="Prenotabile con The Fork">Prenotabile con The Fork</label>
+                                <label><input type="checkbox" name="filtro" value="Pagina Instagram presente">Pagina Instagram presente</label>
+                                <label><input type="checkbox" name="filtro" value="Aperti ora">Aperti ora</label>
+                                <label><input type="checkbox" name="filtro" value="Accessibile in sedia a rotelle">Accessibile in sedia a rotelle</label>
+                                <label><input type="checkbox" name="filtro" value="Ammette animali">Ammette animali</label>
+                                <label><input type="checkbox" name="filtro" value="All you can eat">All you can eat</label>
+                            </div>
                         </div>
+                        <label for="filter">Filtra per nome:</label>
+                        <input type="text" id="filter" name="filter">
                     </div>
                 </div>
+                
                 <ul class="list-container" id="lista-luoghi">
                 
                 </ul>
+                <div class="theme-container shadow-dark">
+                    <img id="theme-icon"    src="https://www.uplooder.net/img/image/2/addf703a24a12d030968858e0879b11e/moon.svg" alt="ERR">
+                </div>
             </div>
         </div>
 	</div>

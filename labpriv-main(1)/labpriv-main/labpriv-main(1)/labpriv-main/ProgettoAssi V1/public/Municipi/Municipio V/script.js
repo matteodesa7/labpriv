@@ -21,8 +21,8 @@ var Municipio="V";
 var data = [
   {
     "id": "V1",
-    "location": [41.88997970881795, 12.523782085523587],
-    "popupContent": "Bar Sciubba Roma"
+    "location": [41.889232710295396, 12.530284140833727],
+    "popupContent": "Necci dal 1924"
   },
   {
     "id": "V2",

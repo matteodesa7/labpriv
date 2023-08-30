@@ -832,6 +832,7 @@ const sun = "https://www.uplooder.net/img/image/55/7aa9993fc291bc170abea04858989
 const moon = "https://www.uplooder.net/img/image/2/addf703a24a12d030968858e0879b11e/moon.svg"
 
 var theme = "dark";
+const rightColumn = document.getElementById("right-column");
 const root = document.querySelector(":root");
 const container = document.getElementsByClassName("theme-container")[0];
 const themeIcon = document.getElementById("theme-icon");
@@ -849,6 +850,10 @@ function setTheme() {
   }
 }
 function setLight() {
+
+  rightColumn.classList.remove("theme-dark");
+  rightColumn.classList.add("theme-light");
+
   root.style.setProperty(
     "--bs-dark",
     "linear-gradient(318.32deg, #c3d1e4 0%, #dde7f3 55%, #d4e0ed 100%)"
@@ -860,8 +865,14 @@ function setLight() {
   }, 300);
   themeIcon.classList.add("change");
   themeIcon.src = sun;
+
+
 }
 function setDark() {
+
+  rightColumn.classList.remove("theme-light");
+  rightColumn.classList.add("theme-dark");
+
   root.style.setProperty("--bs-dark", "#212529");
   container.classList.remove("shadow-light");
   setTimeout(() => {
@@ -871,22 +882,5 @@ function setDark() {
   themeIcon.classList.add("change");
   themeIcon.src = moon;
 }
-
-
-const cambiaPulsante = document.getElementById('cambiaPulsante');
-
-let isEtichettaA = true;
-
-cambiaPulsante.addEventListener('click', function() {
-    if (isEtichettaA) {
-        cambiaPulsante.textContent = 'U';
-    } else {
-        cambiaPulsante.textContent = 'A';
-    }
-
-    // Inverti il valore di isEtichettaA
-    isEtichettaA = !isEtichettaA;
-});
- 
 
 
