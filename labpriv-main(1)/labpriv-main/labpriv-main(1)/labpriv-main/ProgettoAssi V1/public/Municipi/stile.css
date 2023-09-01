@@ -118,11 +118,16 @@ body {
   border-color: #4e555b;
 }
 
+.btn-secondary.dropdown-toggle {
+  width: auto; /* Imposta la larghezza automatica */
+}
 /*Menù a discesa sulla navbar con nome utente*/
 #usermenu {
   position: absolute;
-  left: 80%;
+  left: 82%;
   background-color: rgb(255, 196, 157);
+  width: auto; /* Imposta la larghezza automatica */
+
 }
 /*Azione entrambi i bottoni se ci passi sopra con il cursore*/
 #dropdownMenuButton:hover {
