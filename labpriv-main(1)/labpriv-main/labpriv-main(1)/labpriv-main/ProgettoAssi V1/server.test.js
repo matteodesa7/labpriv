@@ -113,7 +113,7 @@ describe("Test sull'accesso dell'admin",()=>{
         })
         expect(response.body.done).toBe(true); // Verify the status code
     })
-    it ("Se la mail non appartiene a un possibile admin restituisce false",async ()=>{
+    it ("Se il token è sbagliato l'accesso admin non è consentito, resistuisce false",async ()=>{
         const response= await request(server).post("/verifyAdminToken").send({
             email:"marc.capobianco01@gmail.com",
             token:"123"

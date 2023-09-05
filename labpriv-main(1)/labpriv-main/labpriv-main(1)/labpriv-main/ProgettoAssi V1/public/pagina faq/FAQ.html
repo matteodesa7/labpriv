@@ -3,21 +3,21 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Tendenza</title>
+	<title>FAQ</title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="./stile.css">
-    <link rel="icon" type="image/x-icon" href="./trend.png" >
+    <link rel="icon" type="image/x-icon" href="./faq.png" >
     <script src="https://kit.fontawesome.com/a316d55189.js" crossorigin="anonymous"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 </head>
 <body>
-	<nav class="navbar navbar-light" style="background-color: lemonchiffon;">
+	<nav class="navbar navbar-light" style="background-color: #fc9b00;">
         <a class="navbar-brand" href="/index.html">
-            <img src="./trend.png">
+            <img src="./faq.png">
         </a>
         <a class="navbar-brand mr-auto" href="/index.html">
-            <h3>Tendenza</h3>
+            <h3>FAQ</h3>
         </a>
 
         <ul class="nav-item dropdown ml-auto" style = "margin-bottom: 0px;">
@@ -59,7 +59,7 @@
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Municipi
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: #fcc100">
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown" style="background-color: lemonchiffon;">
                         <a class="dropdown-item" href="/Municipi/Municipio I/Municipio I.html">I Municipio</a>
                         <a class="dropdown-item" href="/Municipi/Municipio II/Municipio II.html">II Municipio</a>
                         <a class="dropdown-item" href="/Municipi/Municipio III/Municipio III.html">III Municipio</a>
@@ -84,69 +84,90 @@
                 <li class="nav-item">
                     <a class="nav-link" href="./contattaci.html">Contattaci</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="./tendenza.html">Tendenza</a></a>
+                </li>
                 <li class="nav-item active">
-                    <a class="nav-link" href="./tendenza.html">Tendenza<span class="sr-only">(current)</span></a></a>
+                    <a class="nav-link" href="./FAQ.html">FAQ<span class="sr-only">(current)</span></a></a>
                 </li>
             </ul>
         </div>
     </nav>
 	
     <header class="text-center py-4">
-        <h1>Luoghi in tendenza questa settimana</h1>
+        <h1>Frequently Asked Question</h1>
     </header>
 
     <main class="container my-5">
+        <div class="justify-content-center">
         <section class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        <p class="card-text"></p>
-                        <a href="#" class="btn btn-primary">Scopri di più</a>
+            <div class="col" style="margin-bottom: 30px">
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="question1">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#answer1" aria-expanded="true" aria-controls="answer1" style="background: none; border:none;">
+                                Posso fidarmi delle recensioni sul vostro sito?
+                            </button>
+                        </h2>
+                        <div id="answer1" class="accordion-collapse collapse show" aria-labelledby="question1" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Tutte le recensioni che trovi sul nostro sito, sono state scritte da utenti affidabili e verificate dagli amministratori del sito.
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        <p class="card-text"></p>
-                        <a href="#" class="btn btn-primary">Scopri di più</a>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="question2">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#answer2" aria-expanded="true" aria-controls="answer2" style="background: none; border:none;">
+                                È possibile aggiungere il proprio locale?
+                            </button>
+                        </h2>
+                        <div id="answer2" class="accordion-collapse collapse show" aria-labelledby="question2" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Assolutamente, basterà inviarci una mail con il perché dovremmo farlo ed il nostro team provvederà a rispondere il prima possibile.
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-    
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        <p class="card-text"></p>
-                        <a href="#" class="btn btn-primary">Scopri di più</a>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="question3">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#answer3" aria-expanded="true" aria-controls="answer3" style="background: none; border:none;">
+                                Una volta scritta una recensione, posso eliminarla?
+                            </button>
+                        </h2>
+                        <div id="answer3" class="accordion-collapse collapse show" aria-labelledby="question3" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                No, purtroppo una volta scritta non può essere eliminata.
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-    
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        <p class="card-text"></p>
-                        <a href="#" class="btn btn-primary">Scopri di più</a>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="question4">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#answer4" aria-expanded="true" aria-controls="answer4" style="background: none; border:none;">
+                                Quand'è che una recensione viene eliminata?
+                            </button>
+                        </h2>
+                        <div id="answer4" class="accordion-collapse collapse show" aria-labelledby="question4" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Una recensione, viene elimanta soltanto quando viola le nostre linee guida riguardo il rispetto degli altri utenti, <br>
+                                non sono ammessi alcun tipo di insulto rivolto verso i proprietari dei locali o di altro genere e tipo.
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            
-            <div class="col">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"></h5>
-                        <p class="card-text"></p>
-                        <a href="#" class="btn btn-primary">Scopri di più</a>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="question5">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#answer5" aria-expanded="true" aria-controls="answer5" style="background: none; border:none;">
+                                È possibile salvare un posto nei preferiti? 
+                            </button>
+                        </h2>
+                        <div id="answer5" class="accordion-collapse collapse show" aria-labelledby="question5" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Sì, è possibile basta scegliere il municipio e aggiungere il locale dalla mappa. 
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
+    </div>
     </main>    
     
     <footer>
