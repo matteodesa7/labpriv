@@ -7,7 +7,7 @@ describe("Test sulla registrazione",()=>{
         //Dovrebbe salvare i dati nel database
         const response= await request(server).post("/redirect").send({
             nome:"TestCorretto",
-            email:"progettolab@gmail.com",
+            email:"progettolab1@gmail.com",
             password:"Ciccione01." 
         })
         expect(response.status).toBe(307); // Verify the status code
