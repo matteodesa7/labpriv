@@ -98,7 +98,7 @@ function checkLoggedIn() {
       navLinks[0].setAttribute('href', '/Login/Login.html');
     }
   }
-//Funzione per effettura il logout, prende tutti i dati necessari da salvare e li manda via fetch e poi elimina tutti ciò che è stato salvato nel localstorage sulla sessione dell'utente
+//Funzione per effettuare il logout, prende tutti i dati necessari da salvare e li manda via fetch e poi elimina tutti ciò che è stato salvato nel localstorage sulla sessione dell'utente
 function Exit() {
     const Stringlist = localStorage.getItem('preferiti');
     const list = JSON.parse(Stringlist);

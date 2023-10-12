@@ -273,6 +273,4 @@ function ban_or_pardon(event){
     console.error('Errore:', error);
   });
 
-
-
 }

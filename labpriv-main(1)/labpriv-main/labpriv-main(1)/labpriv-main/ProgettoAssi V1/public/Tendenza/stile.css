@@ -31,12 +31,16 @@ body {
 }
 
 header h1{
-  font-family: "Lucida Console", sans-serif; /* Cambia il font a tua scelta */
-  font-weight: bold; /* Aggiungi la grassetto se necessario */
+  font-family: "Georgia", sans-serif; /* Cambia il font a tua scelta */
+  font-size: 60px;
+  margin: 0;
+  padding: 0;
   color: #333; /* Cambia il colore del testo a tua scelta */
   text-decoration: underline; /* Sottolineatura del testo */
   display: inline-block; /* Evita che la sottolineatura si estenda a tutta la larghezza */
-  margin-bottom: 0; /* Rimuove il margine inferiore dal titolo */
+}
+main.container.my-5 {
+  margin-top: 0px;
 }
 #dropdownMenuButton {
   font-family: 'Lucida Console', sans-serif; /* Imposta il font del pulsante di menu a discesa */

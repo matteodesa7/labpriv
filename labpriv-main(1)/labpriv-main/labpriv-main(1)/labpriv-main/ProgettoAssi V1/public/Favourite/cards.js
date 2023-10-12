@@ -6,21 +6,21 @@ var successivo= document.getElementById('successivo');
 init();
 //La funzione init viene chiamata a inizio a pagina, quando si cambia pagina e quando viene eliminato un elemento e il numero di pagine diminuisce
 function init(){
-precedente.style.display= 'none';
-successivo.style.display= 'none';
-azzeraCards();
-const Stringlist= localStorage.getItem('preferiti');
-const list = JSON.parse(Stringlist);
-console.log(list);
-var n=list.length;
-if(n>0){
-    //Ci sono dei preferiti quindi vanno aggiunti
-    //Per prima cosa calcolo quante pagine ci saranno
-    var MaxPage=Math.ceil(n/6);
+    precedente.style.display= 'none';
+    successivo.style.display= 'none';
+    azzeraCards();
+    const Stringlist= localStorage.getItem('preferiti');
+    const list = JSON.parse(Stringlist);
+    console.log(list);
+    var n=list.length;
+    if(n>0){
+        //Ci sono dei preferiti quindi vanno aggiunti
+        //Per prima cosa calcolo quante pagine ci saranno
+        var MaxPage=Math.ceil(n/6);
 
-    //Chiamo la funzione per settare la prima pagina e i pulsanti
-    setCards(thispage,MaxPage,n);
-    }
+        //Chiamo la funzione per settare la prima pagina e i pulsanti
+        setCards(thispage,MaxPage,n);
+        }
 }
 //Funzione per settare le cards
 function setCards(page,MaxPage,n) {
@@ -71,7 +71,7 @@ function setCards(page,MaxPage,n) {
         console.log(i);
     }
     console.log("Questa è la pagina "+thispage);
-  }
+}
 
 
 //Funzione e listener per i pulsanti successivo e precedente
@@ -129,4 +129,4 @@ function getRidof(event) {
     let MaxPage=Math.ceil(n/6);
     if (thispage>MaxPage)thispage--;//se è vera bisogna diminuire la pagina
     init();
-  }
+}

@@ -159,6 +159,7 @@ function getRidof(event) {
       console.error('Errore:', error);
     });
   }
+  
 
 
 function approveReview(event){ 
@@ -192,7 +193,4 @@ function approveReview(event){
     swal("Errore", "Non è stato possibile approvare la recensione", "error");
     console.error('Errore:', error);
   });
-
-
-
 }

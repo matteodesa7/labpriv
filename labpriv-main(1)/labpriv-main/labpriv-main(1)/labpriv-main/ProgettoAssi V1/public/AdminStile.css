@@ -96,7 +96,7 @@
   border-radius: .30rem; /* Aggiunge un bordo arrotondato al pulsante con un raggio di 0.30 rem */
   color: rgba(0,0,0,.5); /* Imposta il colore del testo del pulsante su un nero leggermente trasparente */
   border-color: rgba(0,0,0,.1); /* Imposta il colore del bordo del pulsante su un grigio chiaro trasparente */
-  margin-left: 880px; /* Imposta un margine sinistro di 880px per spostare il pulsante a destra */
+  margin-left: 800px; /* Imposta un margine sinistro di 880px per spostare il pulsante a destra */
 }
 
 /* Stile dei pulsanti di tipo btn-secondary quando attivi o selezionati */
@@ -108,11 +108,12 @@
   border-color: #4e555b; /* Imposta il colore del bordo del pulsante attivo o selezionato su un grigio scuro */
 }
 
-/* Stile del menu a tendina */
-.dropdown-menu {
-  position: absolute; /* Imposta la posizione del menu a tendina come assoluta rispetto al suo contenitore */
-  left: 85%; /* Sposta il menu a tendina verso sinistra del 85% rispetto al suo contenitore */
-  background-color: rgb(255, 196, 157); /* Imposta il colore di sfondo del menu a tendina come un arancione chiaro */
+/*Bottone per menù a discesa della navbar*/
+#usermenu {
+  position: absolute;
+  left: 80%;
+  background-color: rgb(255, 196, 157);
+  width: auto; /* Imposta la larghezza automatica */
 }
 
 /* Stile del pulsante dropdown al passaggio del mouse */
